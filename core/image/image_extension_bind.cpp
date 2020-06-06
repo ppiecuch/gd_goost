@@ -1,5 +1,5 @@
-#include "core/bind/2d/image_extension_bind.h"
-#include "core/image/image_extension.h"
+#include "image_extension_bind.h"
+#include "image_extension.h"
 
 _ImageExtension *_ImageExtension::singleton = NULL;
 

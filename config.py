@@ -4,9 +4,12 @@ def can_build(env, platform):
 
 
 def configure(env):
-    from SCons.Script import Variables, Help
+    from SCons.Script import Variables, BoolVariable, Help
+    from core import components
 
     opts = Variables()
+    for name in components:
+        opts.Add(BoolVariable("goost_%s_enabled" % (name), "Build %s core component." % (name), True))
 
     opts.Add("goost_scale_factor", "The precision used for converting between integer and float coordinates.", "1e5")
 
