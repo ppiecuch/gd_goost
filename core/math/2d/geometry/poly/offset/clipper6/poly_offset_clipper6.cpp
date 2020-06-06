@@ -1,4 +1,4 @@
-#include "goost/core/math/2d/geometry/poly/utils/godot_clipper6_path_convert.h"
+#include "core/math/2d/geometry/poly/utils/godot_clipper6_path_convert.h"
 #include "poly_offset_clipper6.h"
 
 Vector<Vector<Point2> > PolyOffset2DClipper6::offset_polypaths(const Vector<Vector<Point2> > &p_polypaths, real_t p_delta) {

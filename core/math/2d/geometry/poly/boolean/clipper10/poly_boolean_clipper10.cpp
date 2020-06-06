@@ -1,5 +1,5 @@
-#include "goost/core/math/2d/geometry/geometry_extension.h"
-#include "goost/core/math/2d/geometry/poly/utils/godot_clipper10_path_convert.h"
+#include "core/math/2d/geometry/geometry_extension.h"
+#include "core/math/2d/geometry/poly/utils/godot_clipper10_path_convert.h"
 #include "poly_boolean_clipper10.h"
 
 Vector<Vector<Point2> > PolyBoolean2DClipper10::polypaths_boolean(Operation p_op, const Vector<Vector<Point2> > &p_polypaths_a, const Vector<Vector<Point2> > &p_polypaths_b) {

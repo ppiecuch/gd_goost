@@ -2,7 +2,7 @@
 #define IMAGE_LOADER_INDEXED_PNG_H
 
 #include "core/io/image_loader.h"
-#include "goost/core/image/image_indexed.h"
+#include "core/image/image_indexed.h"
 
 #include <png.h>
 

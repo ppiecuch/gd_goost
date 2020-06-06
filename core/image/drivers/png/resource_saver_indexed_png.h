@@ -2,7 +2,7 @@
 #define RESOURCE_SAVER_INDEXED_PNG_H
 
 #include "core/io/resource_saver.h"
-#include "goost/core/image/image_indexed.h"
+#include "core/image/image_indexed.h"
 
 class ResourceSaverIndexedPNG : public ResourceFormatSaver {
 	

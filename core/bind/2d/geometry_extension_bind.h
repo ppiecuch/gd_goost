@@ -1,7 +1,7 @@
 #ifndef GOOST_GEOMETRY_TOOLS_BIND_H
 #define GOOST_GEOMETRY_TOOLS_BIND_H
 
-#include "goost/core/math/2d/geometry/geometry_extension.h"
+#include "core/math/2d/geometry/geometry_extension.h"
 
 class _GeometryExtension2D : public Object {
 	GDCLASS(_GeometryExtension2D, Object);

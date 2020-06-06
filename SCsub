@@ -24,7 +24,7 @@ env_thirdparty.Prepend(CPPPATH=[thirdparty_path])
 env_goost.Prepend(CPPPATH=[thirdparty_path])
 
 goost_path = os.path.dirname(os.path.realpath(os.curdir))
-env_goost.Prepend(CPPPATH=[goost_path])
+env_goost.Prepend(CPPPATH=[goost_path, os.path.realpath(".")])
 
 env_goost.Prepend(CPPDEFINES={"SCALE_FACTOR" : env_goost["goost_scale_factor"]})
 
@@ -34,7 +34,6 @@ env_goost.add_source_files(env.modules_sources, "*.cpp")
 subdirs = [
     "core",
     "scene",
-    "editor",
-    # "modules", # Not build directly, use `custom_modules` option explicitly.
+    "editor"
 ]
 SConscript(dirs=subdirs, name="SCsub", exports="env_goost")

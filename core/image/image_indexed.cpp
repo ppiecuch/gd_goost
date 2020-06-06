@@ -1,6 +1,6 @@
 #include "core/io/image_loader.h"
-#include "goost/core/image/image_indexed.h"
-#include "goost/thirdparty/exoquant/exoquant.h"
+#include "core/image/image_indexed.h"
+#include "thirdparty/exoquant/exoquant.h"
 
 const int ImageIndexed::MAX_PALETTE_SIZE = 256;
 

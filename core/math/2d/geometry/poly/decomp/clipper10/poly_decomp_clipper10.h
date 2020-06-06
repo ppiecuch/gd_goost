@@ -1,8 +1,8 @@
 #ifndef GOOST_GEOMETRY_POLY_DECOMP_CLIPPER10
 #define GOOST_GEOMETRY_POLY_DECOMP_CLIPPER10
 
-#include "goost/core/math/2d/geometry/poly/decomp/polypartition/poly_decomp_polypartition.h"
-#include "goost/thirdparty/clipper/clipper_triangulation.h"
+#include "core/math/2d/geometry/poly/decomp/polypartition/poly_decomp_polypartition.h"
+#include "thirdparty/clipper/clipper_triangulation.h"
 
 class PolyDecomp2DClipper10 : public PolyDecomp2DPolyPartition {
 public:

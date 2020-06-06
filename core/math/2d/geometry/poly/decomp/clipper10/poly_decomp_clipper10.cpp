@@ -1,4 +1,4 @@
-#include "goost/core/math/2d/geometry/poly/utils/godot_clipper10_path_convert.h"
+#include "core/math/2d/geometry/poly/utils/godot_clipper10_path_convert.h"
 #include "poly_decomp_clipper10.h"
 
 Vector<Vector<Point2> > PolyDecomp2DClipper10::triangulate_mono(const Vector<Vector<Point2> > &p_polygons) {

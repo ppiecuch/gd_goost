@@ -1,7 +1,7 @@
 #ifndef GOOST_GEOMETRY_POLY_OFFSET_CLIPPER6
 #define GOOST_GEOMETRY_POLY_OFFSET_CLIPPER6
 
-#include "goost/core/math/2d/geometry/poly/offset/poly_offset.h"
+#include "core/math/2d/geometry/poly/offset/poly_offset.h"
 #include "thirdparty/misc/clipper.hpp"
 
 class PolyOffset2DClipper6 : public PolyOffset2D {

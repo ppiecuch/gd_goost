@@ -1,8 +1,8 @@
 #ifndef GOOST_GEOMETRY_CLIPPER10
 #define GOOST_GEOMETRY_CLIPPER10
 
-#include "goost/core/math/2d/geometry/poly/boolean/poly_boolean.h"
-#include "goost/thirdparty/clipper/clipper.h"
+#include "core/math/2d/geometry/poly/boolean/poly_boolean.h"
+#include "thirdparty/clipper/clipper.h"
 
 class PolyBoolean2DClipper10 : public PolyBoolean2D {
 public:

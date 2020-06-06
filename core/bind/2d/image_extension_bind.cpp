@@ -1,7 +1,17 @@
-#include "goost/core/bind/2d/image_extension_bind.h"
-#include "goost/core/image/image_extension.h"
+#include "core/bind/2d/image_extension_bind.h"
+#include "core/image/image_extension.h"
 
 _ImageExtension *_ImageExtension::singleton = NULL;
+
+Ref<Image> _ImageExtension::rotate_90_cw(Ref<Image> p_image) {
+
+	return ImageExtension::rotate_90_cw(p_image);
+}
+
+Ref<Image> _ImageExtension::rotate_90_ccw(Ref<Image> p_image) {
+
+	return ImageExtension::rotate_90_ccw(p_image);
+}
 
 void _ImageExtension::replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color) {
 
@@ -44,6 +54,8 @@ Variant _ImageExtension::get_pixelv_or_null(Ref<Image> p_image, const Vector2 &p
 void _ImageExtension::_bind_methods() {
 
 	// Image methods
+	ClassDB::bind_method(D_METHOD("rotate_90_cw", "image"), &_ImageExtension::rotate_90_cw);
+	ClassDB::bind_method(D_METHOD("rotate_90_ccw", "image"), &_ImageExtension::rotate_90_ccw);
 	ClassDB::bind_method(D_METHOD("replace_color", "image", "color", "with_color"), &_ImageExtension::replace_color);
 	ClassDB::bind_method(D_METHOD("bucket_fill", "image", "at", "fill_color", "fill_image", "connectivity"), &_ImageExtension::bucket_fill, DEFVAL(true), DEFVAL(KERNEL_FOUR_WAY));
 	ClassDB::bind_method(D_METHOD("resize_hqx", "image", "scale"), &_ImageExtension::resize_hqx, DEFVAL(2));

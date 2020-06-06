@@ -3,7 +3,7 @@
 
 #include "core/vector.h"
 #include "core/math/vector2.h"
-#include "goost/thirdparty/clipper/clipper.h"
+#include "thirdparty/clipper/clipper.h"
 
 namespace GodotClipperUtils {
 

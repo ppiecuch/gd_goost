@@ -1,2 +1,2 @@
-void register_goost_types();
-void unregister_goost_types();
+void register_gd_goost_types();
+void unregister_gd_goost_types();
