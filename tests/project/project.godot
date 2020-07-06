@@ -8,15 +8,24 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Reference",
+"class": "Goost",
+"language": "GDScript",
+"path": "res://goost/goost.gd"
+} ]
 _global_script_class_icons={
-
+"Goost": ""
 }
 
 [application]
 
-config/name="Goost"
+config/name="Goost Tests"
+config/description="Goost Test Project"
 run/main_scene="res://test.tscn"
+boot_splash/image="res://icon.png"
+boot_splash/fullsize=false
+config/icon="res://icon.png"
 
 [editor_plugins]
 

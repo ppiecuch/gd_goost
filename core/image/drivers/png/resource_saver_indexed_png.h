@@ -5,7 +5,6 @@
 #include "core/image/image_indexed.h"
 
 class ResourceSaverIndexedPNG : public ResourceFormatSaver {
-	
 public:
 	static Error save_image(const String &p_path, const Ref<ImageIndexed> &p_img);
 

@@ -6,27 +6,27 @@
 
 class ShapeCast2D : public Node2D {
 	GDCLASS(ShapeCast2D, Node2D);
-	
-	bool enabled;
-	
+
+	bool enabled = true;
+
 	Ref<Shape2D> shape;
 	RID shape_rid;
-	Vector2 cast_to;
-	
+	Vector2 cast_to = Vector2(0, 50);
+
 	Set<RID> exclude;
-	real_t margin;
-	uint32_t collision_mask;
-	bool exclude_parent_body;
-	bool collide_with_areas;
-	bool collide_with_bodies;
-	
+	real_t margin = 0.0;
+	uint32_t collision_mask = 1;
+	bool exclude_parent_body = true;
+	bool collide_with_areas = false;
+	bool collide_with_bodies = true;
+
 	// Result
-	int max_results;
+	int max_results = 32;
 	Vector<Physics2DDirectSpaceState::ShapeRestInfo> result;
-	bool collided;
-	real_t collision_safe_distance;
-	real_t collision_unsafe_distance;
-	
+	bool collided = false;
+	real_t collision_safe_distance = 1.0;
+	real_t collision_unsafe_distance = 1.0;
+
 	Array _get_collision_result() const;
 
 protected:
@@ -43,16 +43,16 @@ public:
 
 	void set_enabled(bool p_enabled);
 	bool is_enabled() const;
-	
+
 	void set_shape(const Ref<Shape2D> &p_shape);
 	Ref<Shape2D> get_shape() const;
-	
+
 	void set_cast_to(const Vector2 &p_point);
 	Vector2 get_cast_to() const;
-	
+
 	void set_margin(real_t p_margin);
 	real_t get_margin() const;
-	
+
 	void set_max_results(int p_max_results);
 	int get_max_results() const;
 
@@ -67,13 +67,13 @@ public:
 
 	void force_shapecast_update();
 	bool is_colliding() const;
-	
+
 	int get_collision_count() const;
 	Object *get_collider(int p_idx) const;
 	int get_collider_shape(int p_idx) const;
 	Vector2 get_collision_point(int p_idx) const;
 	Vector2 get_collision_normal(int p_idx) const;
-	
+
 	Object *get_closest_collider() const;
 	int get_closest_collider_shape() const;
 	Vector2 get_closest_collision_point() const;
@@ -86,10 +86,10 @@ public:
 	void remove_exception_rid(const RID &p_rid);
 	void remove_exception(const Object *p_object);
 	void clear_exceptions();
-	
+
 	String get_configuration_warning() const;
 
-	ShapeCast2D();
+	ShapeCast2D() {};
 };
 
 #endif // GOOST_SHAPE_CAST_2D_H
