@@ -54,6 +54,8 @@ classes = [
     "GoostImage",
     "ImageBlender",
     "ImageIndexed",
+    "LinkedList",
+    "ListNode",
     "PolyBooleanParameters2D",
     "PolyDecompParameters2D",
     "PolyOffsetParameters2D",

@@ -51,4 +51,8 @@ def get_doc_path():
 
 
 def get_icons_path():
-    return "editor/icons"
+    return "editor/icons"    
+
+
+def get_modules_path():
+    return "modules"

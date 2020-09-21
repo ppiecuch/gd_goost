@@ -1,32 +1,85 @@
-![Goost](logo.png)
+<p align="center">
+  <a href="https://github.com/goostengine">
+    <img src="logo.svg" width="400" alt="Goost Logo">
+  </a>
+</p>
+
+<p align="right">
+  <i>If something should be in Godot, let it be in Godot.</i>
+</p>
 
 # Goost: Godot Engine Extension
 
-[![Build Status](https://travis-ci.com/GoostGD/goost.svg?branch=gd3)](https://travis-ci.com/GoostGD/goost)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/GoostGD/goost?branch=gd3&svg=true)](https://ci.appveyor.com/project/Xrayez/goost/branch/gd3)
+![🐧 Linux](https://github.com/goostengine/goost/workflows/%F0%9F%90%A7%20Linux/badge.svg)
+![🍎 macOS](https://github.com/goostengine/goost/workflows/%F0%9F%8D%8E%20macOS/badge.svg)
+![🎨 Windows](https://github.com/goostengine/goost/workflows/%F0%9F%8E%A8%20Windows/badge.svg)
+![🤖 Android](https://github.com/goostengine/goost/workflows/%F0%9F%A4%96%20Android/badge.svg)
+![🍏 iOS](https://github.com/goostengine/goost/workflows/%F0%9F%8D%8F%20iOS/badge.svg)
+![🌐 JavaScript](https://github.com/goostengine/goost/workflows/%F0%9F%8C%90%20JavaScript/badge.svg)
 
-This is a [Godot Engine](https://github.com/godotengine/godot) extension
-implemented as a C++ module.
+This is a [Godot Engine](https://github.com/godotengine/godot) 3.2+ extension
+implemented as a
+[C++ module](https://docs.godotengine.org/en/latest/development/cpp/custom_modules_in_cpp.html).
 
-The extension is comprised of functional components, all of which are optional.
-There are also some modules which can be compiled alongside of the extension.
+The extension is comprised of functional components and other modules, most of
+which should be optional to build.
 
 See [Goost official documentation](https://goost.readthedocs.io/en/gd3/) for
 detailed instructions on how to use the module, and the list of currently
 implemented components.
 
+For a complete list of currently implemented classes, refer to
+[Goost API](https://goost.readthedocs.io/en/gd3/classes/index.html).
+
+---
+
+### Goals
+- ***complement*** the engine by implementing missing or not-yet-implemented
+  functionality as seen useful by the Godot community, which also helps to
+  prevent further engine bloat;
+- provide additional core data structures, classes and methods to optimize
+  performance-critical code in a general-purpose way for when GDScript or other
+  languages are too slow, or when better integration is desired with existing
+  libraries;
+- expose, reuse, and build upon the engine's hidden built-in functionality
+  typically unavailable to scripting;
+- overcome engine limitations which may be difficult to do via script,
+  especially when those limitations can be mitigated on the module level without
+  having to maintain a custom version of the engine.
+
+### Non-goals
+- solving domain-specific problems. Consider contributing to a project such as
+  [Godot Node Extensions](https://github.com/godot-extended-libraries/godot-next)
+  instead.
+- collecting arbitrary community C++ modules for the sake of it, unless a module
+  provides common enough functionality which would be useful to a good chunk of
+  users.
+
+---
+
+### Community channels
+
+Join [#goost](https://discord.gg/w6jBZnG) Discord channel at the
+[GEL](https://github.com/godot-extended-libraries) Discord server for discussion
+and development updates.
+
+---
+
 ## Compiling
 
 ```sh
-git clone https://github.com/goostengine/goost.git
-scons custom_modules="/path/to/directory/containing/goost"
+git clone https://github.com/goostengine/goost
+cd goost
+scons
 ```
 
-### Compatibility
+This will clone the Godot Engine repository and compile the engine with Goost.
+You'll find the resulting binaries at `godot/bin` directory relative to the
+Goost repository.
 
-Godot Engine 3.2 compatible.
-
-`custom_modules` build option is added since the release of Godot Engine 3.2.2.
+For more advanced compilation options, refer to
+[Goost Installation](https://goost.readthedocs.io/en/gd3/usage/installation.html)
+documentation pages.
 
 ## Development
 
@@ -48,7 +101,7 @@ ones. See the following official documentation pages for further instructions:
 - [Contribute to the Class Reference](https://docs.godotengine.org/en/latest/community/contributing/updating_the_class_reference.html)
 - [Writing custom documentation](https://docs.godotengine.org/en/latest/development/cpp/custom_modules_in_cpp.html#writing-custom-documentation)
 
-### Versioning
+### Versioning and compatibility
 
 There are separate branches which are targeted for specific Godot Engine's major
 version.
