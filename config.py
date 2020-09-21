@@ -3,7 +3,7 @@ import goost
 
 def can_build(env, platform):
     # Editor only module
-    return env['tools']
+    return env["tools"]
 
 
 def configure(env):
@@ -51,4 +51,4 @@ def get_doc_path():
 
 
 def get_icons_path():
-    return "editor/icons"    
+    return "editor/icons"

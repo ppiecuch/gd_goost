@@ -12,6 +12,7 @@ components = [
     "editor",
 ]
 
+
 def get_components():
     comp = set()
 
@@ -27,7 +28,7 @@ def get_components():
 
 def get_child_components(parent):
     comp_list = []
-    
+
     for n in components:
         parts = n.split("/")
         if not parent in parts:
@@ -37,12 +38,14 @@ def get_child_components(parent):
             if p == parent:
                 break
             comp_list.append(p)
-    
+
     return comp_list
+
+
 #
 # Complete list of all classes currently implemented in the extension,
 # excluding any classes provided from within `modules/` directory.
-# 
+#
 # This is used by config.py::get_doc_classes(), and potentially allow to disable
 # each of the class in the future.
 #
@@ -60,8 +63,8 @@ classes = [
 ]
 classes_dependencies = {
     # ClassA : Depends on ClassB.
-    "GoostGeometry2D" : "PolyBooleanParameters2D",
-    "GoostGeometry2D" : "PolyDecompParameters2D",
-    "GoostGeometry2D" : "PolyOffsetParameters2D",
-    "GoostGeometry2D" : "PolyNode2D",
+    "GoostGeometry2D": "PolyBooleanParameters2D",
+    "GoostGeometry2D": "PolyDecompParameters2D",
+    "GoostGeometry2D": "PolyOffsetParameters2D",
+    "GoostGeometry2D": "PolyNode2D",
 }

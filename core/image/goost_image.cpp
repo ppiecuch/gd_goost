@@ -314,6 +314,8 @@ Ref<Image> GoostImage::repeat(const Ref<Image> &p_image, const Size2i &p_count, 
 		for (int j = 0; j < cols; ++j) {
 			src = p_image;
 			switch (p_mode) {
+				case TILE: {
+				} break;
 				case TILE_FLIP_Y: {
 					if (i & 1) {
 						src = src_fy;
