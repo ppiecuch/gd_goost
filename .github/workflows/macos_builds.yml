@@ -9,7 +9,7 @@ on:
 
 env:
   GOOST_BASE_BRANCH: gd3
-  GODOT_BUILTIN_MODULES: disabled
+  SCONSFLAGS: godot_modules_enabled=no --jobs=4
   SCONS_CACHE_LIMIT: 4096
 
 jobs:
@@ -49,7 +49,12 @@ jobs:
         env:
           SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=osx tools=yes target=release_debug
+          scons verbose=yes warnings=all werror=yes platform=osx tools=yes target=release_debug
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: godot.osx.opt.tools.64.goost
+          path: godot/bin/godot.osx.opt.tools.64.goost
 
   macos-template:
     runs-on: "macos-latest"
@@ -86,4 +91,4 @@ jobs:
         env:
           SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=osx target=release tools=no
+          scons verbose=yes warnings=all werror=yes platform=osx target=release tools=no
