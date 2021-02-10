@@ -1,22 +1,20 @@
-#ifndef GOOST_GEOMETRY_CLIPPER10
-#define GOOST_GEOMETRY_CLIPPER10
+#ifndef GOOST_GEOMETRY_POLY_BOOLEAN_CLIPPER10
+#define GOOST_GEOMETRY_POLY_BOOLEAN_CLIPPER10
 
-#include "core/math/2d/geometry/poly/boolean/poly_boolean.h"
+#include "../poly_boolean.h"
 #include "thirdparty/clipper/clipper.h"
 
-class PolyBoolean2DClipper10 : public PolyBoolean2D {
+class PolyBoolean2DClipper10 : public PolyBoolean2DBackend {
 public:
-	virtual Vector<Vector<Point2>> polypaths_boolean(Operation p_op, const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b) override;
-	virtual Ref<PolyNode2D> polypaths_boolean_tree(Operation p_op, const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b) override;
-
-protected:
-	clipperlib::Clipper configure(Operation p_op, const Ref<PolyBooleanParameters2D> &p_params);
+	virtual Vector<Vector<Point2>> boolean_polypaths(const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b, Operation p_op) override;
+	virtual void boolean_polypaths_tree(const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b, Operation p_op, PolyNode2D *r_root) override;
 
 private:
+	clipperlib::Clipper configure(Operation p_op, const Ref<PolyBooleanParameters2D> &p_params);
 	clipperlib::ClipType clip_type;
 	clipperlib::FillRule subject_fill_rule;
 	clipperlib::FillRule clip_fill_rule;
 	bool subject_open;
 };
 
-#endif // GOOST_GEOMETRY_CLIPPER10
+#endif // GOOST_GEOMETRY_POLY_BOOLEAN_CLIPPER10

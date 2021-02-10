@@ -50,24 +50,43 @@ def get_child_components(parent):
 # each of the class in the future.
 #
 classes = [
+    "GoostEngine",
     "GoostGeometry2D",
     "GoostImage",
+    "GradientTexture2D",
+    "Grid2D",
     "ImageBlender",
     "ImageIndexed",
+    "InvokeState",
     "LinkedList",
     "ListNode",
+    "PolyBoolean2D",
     "PolyBooleanParameters2D",
+    "PolyDecomp2D",
     "PolyDecompParameters2D",
+    "PolyOffset2D",
     "PolyOffsetParameters2D",
     "PolyNode2D",
+    "PolyCircle2D",
+    "PolyRectangle2D",
+    "PolyShape2D",
+    "PolyCollisionShape2D",
     "Random",
+    "Random2D",
     "ShapeCast2D",
+    "VariantResource",
     "VisualShape2D",
 ]
-classes_dependencies = {
-    # ClassA : Depends on ClassB.
-    "GoostGeometry2D": "PolyBooleanParameters2D",
-    "GoostGeometry2D": "PolyDecompParameters2D",
-    "GoostGeometry2D": "PolyOffsetParameters2D",
-    "GoostGeometry2D": "PolyNode2D",
-}
+# ClassA : Depends on ClassB.
+# "GoostEngine" : "InvokeState"
+# "PolyBoolean2D" : "PolyBooleanParameters2D"
+# "PolyBoolean2D" : "PolyNode2D"
+# "PolyDecomp2D" : "PolyDecompParameters2D"
+# "PolyOffset2D" : "PolyOffsetParameters2D"
+# "GoostGeometry2D" : "PolyBoolean2D"
+# "GoostGeometry2D" : "PolyDecomp2D"
+# "GoostGeometry2D" : "PolyOffset2D"
+# "PolyCircle2D" : "PolyNode2D"
+# "PolyRectangle2D" : "PolyNode2D"
+# "PolyShape2D" : "PolyNode2D"
+# "PolyCollisionShape2D" : "PolyNode2D"

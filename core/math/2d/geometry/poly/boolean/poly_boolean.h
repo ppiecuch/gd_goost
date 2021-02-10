@@ -1,31 +1,115 @@
-#ifndef GOOST_GEOMETRY_POLY_H
-#define GOOST_GEOMETRY_POLY_H
+#ifndef GOOST_GEOMETRY_POLY_BOOLEAN_H
+#define GOOST_GEOMETRY_POLY_BOOLEAN_H
 
 #include "core/reference.h"
+#include "../poly_node_2d.h"
 
-class PolyNode2D;
+class PolyBoolean2D;
 class PolyBooleanParameters2D;
+
+class PolyBoolean2DBackend {
+public:
+	virtual void set_parameters(const Ref<PolyBooleanParameters2D> &p_parameters);
+	virtual Ref<PolyBooleanParameters2D> get_parameters() { return parameters; }
+
+	enum Operation {
+		OP_NONE,
+		OP_UNION,
+		OP_DIFFERENCE,
+		OP_INTERSECTION,
+		OP_XOR,
+	};
+	virtual Vector<Vector<Point2>> boolean_polypaths(const Vector<Vector<Point2>> &p_polypaths_A, const Vector<Vector<Point2>> &p_polypaths_B, Operation p_op) = 0;
+	// Note: `r_root` should point to an existing node.
+	virtual void boolean_polypaths_tree(const Vector<Vector<Point2>> &p_polypaths_A, const Vector<Vector<Point2>> &p_polypaths_B, Operation p_op, PolyNode2D *r_root) = 0;
+
+	PolyBoolean2DBackend() {
+		default_parameters.instance();
+		parameters.instance();
+	}
+	virtual ~PolyBoolean2DBackend() {}
+
+protected:
+	Ref<PolyBooleanParameters2D> default_parameters;
+	Ref<PolyBooleanParameters2D> parameters;
+};
 
 class PolyBoolean2D {
 public:
 	enum Operation {
-		OPERATION_NONE,
-		OPERATION_UNION,
-		OPERATION_DIFFERENCE,
-		OPERATION_INTERSECTION,
-		OPERATION_XOR,
+		OP_NONE,
+		OP_UNION,
+		OP_DIFFERENCE,
+		OP_INTERSECTION,
+		OP_XOR,
 	};
-	virtual Vector<Vector<Point2>> polypaths_boolean(Operation p_op, const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b) = 0;
-	virtual Ref<PolyNode2D> polypaths_boolean_tree(Operation p_op, const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b) = 0;
+	static Vector<Vector<Point2>> merge_polygons(const Vector<Vector<Point2>> &p_polygons_a, const Vector<Vector<Point2>> &p_polygons_b = Vector<Vector<Point2>>(), const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
+	static Vector<Vector<Point2>> clip_polygons(const Vector<Vector<Point2>> &p_polygons_a, const Vector<Vector<Point2>> &p_polygons_b, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
+	static Vector<Vector<Point2>> intersect_polygons(const Vector<Vector<Point2>> &p_polygons_a, const Vector<Vector<Point2>> &p_polygons_b, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
+	static Vector<Vector<Point2>> exclude_polygons(const Vector<Vector<Point2>> &p_polygons_a, const Vector<Vector<Point2>> &p_polygons_b, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
 
-	virtual ~PolyBoolean2D() {}
+	static Vector<Vector<Point2>> boolean_polygons(const Vector<Vector<Point2>> &p_polygons_a, const Vector<Vector<Point2>> &p_polygons_b, Operation p_op, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
+	static void boolean_polygons_tree(const Vector<Vector<Point2>> &p_polygons_a, const Vector<Vector<Point2>> &p_polygons_b, Operation p_op, PolyNode2D *r_tree, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
 
-public:
-	void set_params(const Ref<PolyBooleanParameters2D> &p_params) { params = p_params; }
+	static Vector<Vector<Point2>> clip_polylines_with_polygons(const Vector<Vector<Point2>> &p_polylines, const Vector<Vector<Point2>> &p_polygons, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
+	static Vector<Vector<Point2>> intersect_polylines_with_polygons(const Vector<Vector<Point2>> &p_polylines, const Vector<Vector<Point2>> &p_polygons, const Ref<PolyBooleanParameters2D> &p_parameters = Ref<PolyBooleanParameters2D>());
+
+	static void set_backend(PolyBoolean2DBackend *p_backend) { backend = p_backend; }
+	static PolyBoolean2DBackend *get_backend() { return backend; }
+
+private:
+	static PolyBoolean2DBackend *backend;
+};
+
+// BIND
+
+class _PolyBoolean2D : public Reference {
+	GDCLASS(_PolyBoolean2D, Reference);
+
+private:
+	static _PolyBoolean2D *singleton;
 
 protected:
-	Ref<PolyBooleanParameters2D> params;
+	static void _bind_methods();
+
+public:
+	static _PolyBoolean2D *get_singleton() { return singleton; }
+	// Not using Ref<_PolyBoolean2D> as return type due to namespace issues in Godot.
+	virtual Ref<Reference> new_instance() const { return memnew(_PolyBoolean2D); }
+
+	void set_parameters(const Ref<PolyBooleanParameters2D> &p_parameters);
+	Ref<PolyBooleanParameters2D> get_parameters() const;
+
+	enum Operation {
+		OP_NONE,
+		OP_UNION,
+		OP_DIFFERENCE,
+		OP_INTERSECTION,
+		OP_XOR,
+	};
+	Array merge_polygons(Array p_polygons_a, Array p_polygons_b) const;
+	Array clip_polygons(Array p_polygons_a, Array p_polygons_b) const;
+	Array intersect_polygons(Array p_polygons_a, Array p_polygons_b) const;
+	Array exclude_polygons(Array p_polygons_a, Array p_polygons_b) const;
+
+	Array boolean_polygons(Array p_polygons_a, Array p_polygons_b, Operation p_op) const;
+	PolyNode2D *boolean_polygons_tree(Array p_polygons_a, Array p_polygons_b, Operation p_op) const;
+
+	Array clip_polylines_with_polygons(Array p_polylines, Array p_polygons) const;
+	Array intersect_polylines_with_polygons(Array p_polylines, Array p_polygons) const;
+
+	_PolyBoolean2D() {
+		if (!singleton) {
+			singleton = this;
+		}
+		parameters.instance();
+	}
+
+protected:
+	Ref<PolyBooleanParameters2D> parameters;
 };
+
+VARIANT_ENUM_CAST(_PolyBoolean2D::Operation);
 
 class PolyBooleanParameters2D : public Reference {
 	GDCLASS(PolyBooleanParameters2D, Reference);
@@ -80,27 +164,4 @@ public:
 
 VARIANT_ENUM_CAST(PolyBooleanParameters2D::FillRule);
 
-class PolyNode2D : public Reference {
-	GDCLASS(PolyNode2D, Reference);
-
-public:
-	Ref<PolyNode2D> new_child(const Vector<Point2> &p_path);
-	Ref<PolyNode2D> get_child(int p_idx);
-	int get_child_count() const { return children.size(); }
-	Array get_children() const;
-	Ref<PolyNode2D> get_parent() const { return parent; }
-	void set_path(const Vector<Point2> &p_path) { path = p_path; }
-	Vector<Point2> get_path() const { return path; }
-	bool is_hole() const;
-	void clear();
-
-protected:
-	static void _bind_methods();
-
-private:
-	Ref<PolyNode2D> parent;
-	Vector<Point2> path;
-	Vector<Ref<PolyNode2D>> children;
-};
-
-#endif // GOOST_GEOMETRY_POLY_H
+#endif // GOOST_GEOMETRY_POLY_BOOLEAN_H

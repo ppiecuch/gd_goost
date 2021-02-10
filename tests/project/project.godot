@@ -10,12 +10,12 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
-"class": "Goost",
+"class": "TestUtils",
 "language": "GDScript",
-"path": "res://goost/goost.gd"
+"path": "res://test_utils.gd"
 } ]
 _global_script_class_icons={
-"Goost": ""
+"TestUtils": ""
 }
 
 [application]
@@ -31,7 +31,6 @@ config/icon="res://icon.png"
 
 gdscript/warnings/treat_warnings_as_errors=true
 gdscript/warnings/unused_class_variable=true
-gdscript/warnings/unsafe_method_access=true
 gdscript/warnings/unsafe_cast=true
 gdscript/warnings/unsafe_call_argument=true
 

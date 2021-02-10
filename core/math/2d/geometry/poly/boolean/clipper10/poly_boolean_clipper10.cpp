@@ -2,8 +2,8 @@
 #include "core/math/2d/geometry/goost_geometry_2d.h"
 #include "core/math/2d/geometry/poly/utils/godot_clipper10_path_convert.h"
 
-Vector<Vector<Point2>> PolyBoolean2DClipper10::polypaths_boolean(Operation p_op, const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b) {
-	clipperlib::Clipper clp = configure(p_op, params);
+Vector<Vector<Point2>> PolyBoolean2DClipper10::boolean_polypaths(const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b, Operation p_op) {
+	clipperlib::Clipper clp = configure(p_op, parameters);
 
 	clipperlib::Paths subject;
 	GodotClipperUtils::scale_up_polypaths(p_polypaths_a, subject);
@@ -24,8 +24,10 @@ Vector<Vector<Point2>> PolyBoolean2DClipper10::polypaths_boolean(Operation p_op,
 	return ret;
 }
 
-Ref<PolyNode2D> PolyBoolean2DClipper10::polypaths_boolean_tree(Operation p_op, const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b) {
-	clipperlib::Clipper clp = configure(p_op, params);
+void PolyBoolean2DClipper10::boolean_polypaths_tree(const Vector<Vector<Point2>> &p_polypaths_a, const Vector<Vector<Point2>> &p_polypaths_b, Operation p_op, PolyNode2D *r_root) {
+	ERR_FAIL_NULL(r_root);
+
+	clipperlib::Clipper clp = configure(p_op, parameters);
 
 	clipperlib::Paths subject;
 	GodotClipperUtils::scale_up_polypaths(p_polypaths_a, subject);
@@ -41,13 +43,10 @@ Ref<PolyNode2D> PolyBoolean2DClipper10::polypaths_boolean_tree(Operation p_op, c
 	clipperlib::Paths solution_open; // Ignored here but required.
 	clp.Execute(clip_type, tree, solution_open, subject_fill_rule);
 
-	Ref<PolyNode2D> root;
-	root.instance();
-
 	List<clipperlib::PolyPath *> to_visit;
-	Map<clipperlib::PolyPath *, Ref<PolyNode2D>> nodes;
+	Map<clipperlib::PolyPath *, PolyNode2D *> nodes;
 
-	nodes.insert(&tree, root);
+	nodes.insert(&tree, r_root);
 	to_visit.push_back(&tree);
 
 	while (!to_visit.empty()) {
@@ -58,37 +57,36 @@ Ref<PolyNode2D> PolyBoolean2DClipper10::polypaths_boolean_tree(Operation p_op, c
 			clipperlib::PolyPath *child = &parent->GetChild(i);
 			Vector<Point2> child_path;
 			GodotClipperUtils::scale_down_polypath(child->GetPath(), child_path);
-			Ref<PolyNode2D> new_child = nodes[parent]->new_child(child_path);
+			PolyNode2D *new_child = nodes[parent]->new_child(child_path);
 			nodes.insert(child, new_child);
 			to_visit.push_back(child);
 		}
 	}
-	return root;
 }
 
-clipperlib::Clipper PolyBoolean2DClipper10::configure(Operation p_op, const Ref<PolyBooleanParameters2D> &p_params) {
+clipperlib::Clipper PolyBoolean2DClipper10::configure(Operation p_op, const Ref<PolyBooleanParameters2D> &p_parameters) {
 	using namespace clipperlib;
 
 	switch (p_op) {
-		case OPERATION_NONE:
+		case OP_NONE:
 			clip_type = ctNone;
 			break;
-		case OPERATION_UNION:
+		case OP_UNION:
 			clip_type = ctUnion;
 			break;
-		case OPERATION_DIFFERENCE:
+		case OP_DIFFERENCE:
 			clip_type = ctDifference;
 			break;
-		case OPERATION_INTERSECTION:
+		case OP_INTERSECTION:
 			clip_type = ctIntersection;
 			break;
-		case OPERATION_XOR:
+		case OP_XOR:
 			clip_type = ctXor;
 			break;
 	}
-	subject_fill_rule = FillRule(p_params->subject_fill_rule);
-	clip_fill_rule = FillRule(p_params->clip_fill_rule);
-	subject_open = p_params->subject_open;
+	subject_fill_rule = FillRule(p_parameters->subject_fill_rule);
+	clip_fill_rule = FillRule(p_parameters->clip_fill_rule);
+	subject_open = p_parameters->subject_open;
 
 	return Clipper();
 }
