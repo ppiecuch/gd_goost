@@ -27,6 +27,10 @@ if os.path.basename(env["CC"]) in ["clang", "clang++", "emcc", "em++"]:
     # GDCLASS macro expansion in inherited classes.
     env_goost.Append(CCFLAGS=["-Wno-inconsistent-missing-override"])
 
+# Also requires libpng headers
+if env["builtin_libpng"]:
+    env_goost.Prepend(CPPPATH=["#thirdparty/libpng"])
+
 # Build subdirs, the build order is dependent on the link order.
 subdirs = [
     "core",
