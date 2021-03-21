@@ -2,7 +2,7 @@
 #define GOOST_POLY_NODE_2D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/abstract_polygon_2d_editor.h"
-#include "core/math/2d/geometry/poly/poly_node_2d.h"
+#include "../../../core/math/2d/geometry/poly/poly_node_2d.h"
 
 class PolyNode2DEditor : public AbstractPolygon2DEditor {
 	GDCLASS(PolyNode2DEditor, AbstractPolygon2DEditor);

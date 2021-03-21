@@ -2,7 +2,7 @@
 #define GOOST_GEOMETRY_POLY_DECOMP_CLIPPER10
 
 #include "../polypartition/poly_decomp_polypartition.h"
-#include "thirdparty/clipper/clipper_triangulation.h"
+#include "../../../../../../../thirdparty/clipper/clipper_triangulation.h"
 
 class PolyDecomp2DClipper10 : public PolyDecomp2DPolyPartition {
 public:

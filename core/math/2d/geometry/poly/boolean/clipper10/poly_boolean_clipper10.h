@@ -2,7 +2,7 @@
 #define GOOST_GEOMETRY_POLY_BOOLEAN_CLIPPER10
 
 #include "../poly_boolean.h"
-#include "thirdparty/clipper/clipper.h"
+#include "../../../../../../../thirdparty/clipper/clipper.h"
 
 class PolyBoolean2DClipper10 : public PolyBoolean2DBackend {
 public:

@@ -1,6 +1,6 @@
 #include "register_math_types.h"
-#include "goost/register_types.h"
-#include "goost/classes_enabled.gen.h"
+#include "register_types.h"
+#include "classes_enabled.gen.h"
 
 static Ref<Random> _random;
 static Ref<Random2D> _random_2d;

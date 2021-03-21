@@ -2,7 +2,7 @@
 #define GOOST_GEOMETRY_POLY_OFFSET_CLIPPER10
 
 #include "../poly_offset.h"
-#include "thirdparty/clipper/clipper_offset.h"
+#include "../../../../../../../thirdparty/clipper/clipper_offset.h"
 
 class PolyOffset2DClipper10 : public PolyOffset2DBackend {
 public:
