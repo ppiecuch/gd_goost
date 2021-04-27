@@ -70,10 +70,11 @@ void PolyNode2D::_draw() {
 
 		RID texture_rid = texture.is_valid() ? texture->get_rid() : RID();
 		RID normal_map_rid = normal_map.is_valid() ? normal_map->get_rid() : RID();
+		RID mask_rid = mask.is_valid() ? mask->get_rid() : RID();
 
 		VS::get_singleton()->canvas_item_add_triangle_array(
 				get_canvas_item(), indices, vertices, colors, uvs,
-				Vector<int>(), Vector<float>(), texture_rid, -1, normal_map_rid, antialiased);
+				Vector<int>(), Vector<float>(), texture_rid, -1, normal_map_rid, mask_rid, antialiased);
 	}
 }
 
@@ -236,6 +237,11 @@ void PolyNode2D::set_normal_map(const Ref<Texture> &p_texture) {
 	update();
 }
 
+void PolyNode2D::set_mask(const Ref<Texture> &p_texture) {
+	mask = p_texture;
+	update();
+}
+
 void PolyNode2D::set_texture_offset(const Vector2 &p_offset) {
 	tex_ofs = p_offset;
 	update();
@@ -374,6 +380,9 @@ void PolyNode2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_normal_map", "normal_map"), &PolyNode2D::set_normal_map);
 	ClassDB::bind_method(D_METHOD("get_normal_map"), &PolyNode2D::get_normal_map);
 
+	ClassDB::bind_method(D_METHOD("set_mask", "mask"), &PolyNode2D::set_mask);
+	ClassDB::bind_method(D_METHOD("get_mask"), &PolyNode2D::get_mask);
+
 	ClassDB::bind_method(D_METHOD("set_texture_offset", "texture_offset"), &PolyNode2D::set_texture_offset);
 	ClassDB::bind_method(D_METHOD("get_texture_offset"), &PolyNode2D::get_texture_offset);
 
@@ -416,6 +425,7 @@ void PolyNode2D::_bind_methods() {
 	ADD_GROUP("Draw", "");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "normal_map", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_normal_map", "get_normal_map");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "mask", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_mask", "get_mask");
 	ADD_GROUP("Draw", "texture_");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "texture_offset"), "set_texture_offset", "get_texture_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "texture_scale"), "set_texture_scale", "get_texture_scale");

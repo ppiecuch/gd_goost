@@ -24,6 +24,7 @@ protected:
 	// Drawing.
 	Ref<Texture> texture;
 	Ref<Texture> normal_map;
+	Ref<Texture> mask;
 	Size2 tex_scale = Size2(1, 1);
 	Vector2 tex_ofs;
 	float tex_rot = 0.0;
@@ -62,6 +63,9 @@ public:
 
 	void set_normal_map(const Ref<Texture> &p_texture);
 	Ref<Texture> get_normal_map() const { return normal_map; }
+
+	void set_mask(const Ref<Texture> &p_texture);
+	Ref<Texture> get_mask() const { return mask; }
 
 	void set_texture_offset(const Vector2 &p_offset);
 	Vector2 get_texture_offset() const { return tex_ofs; }
