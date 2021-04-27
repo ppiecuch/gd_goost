@@ -5,7 +5,8 @@
 
 GradientTexture2D::GradientTexture2D() {
 	texture = VS::get_singleton()->texture_create();
-	_queue_update();
+	gradient = Ref<Gradient>(memnew(Gradient));
+	set_gradient(gradient);
 }
 
 GradientTexture2D::~GradientTexture2D() {
@@ -15,11 +16,10 @@ GradientTexture2D::~GradientTexture2D() {
 }
 
 void GradientTexture2D::set_gradient(Ref<Gradient> p_gradient) {
-	if (gradient == p_gradient) {
-		return;
-	}
 	if (gradient.is_valid()) {
-		gradient->disconnect(CoreStringNames::get_singleton()->changed, this, "_queue_update");
+		if (gradient->is_connected(CoreStringNames::get_singleton()->changed, this, "_queue_update")) {
+			gradient->disconnect(CoreStringNames::get_singleton()->changed, this, "_queue_update");
+		}
 	}
 	gradient = p_gradient;
 	if (gradient.is_valid()) {
