@@ -8,7 +8,7 @@
   <i>If something should be in Godot, let it be in Godot.</i>
 </p>
 
-# Goost: Godot Engine Extension
+# **Goost**: Godot Engine Extension
 
 ![🐧 Linux](https://github.com/goostengine/goost/workflows/%F0%9F%90%A7%20Linux/badge.svg)
 ![🍎 macOS](https://github.com/goostengine/goost/workflows/%F0%9F%8D%8E%20macOS/badge.svg)
@@ -17,7 +17,7 @@
 ![🍏 iOS](https://github.com/goostengine/goost/workflows/%F0%9F%8D%8F%20iOS/badge.svg)
 ![🌐 JavaScript](https://github.com/goostengine/goost/workflows/%F0%9F%8C%90%20JavaScript/badge.svg)
 
-This is a [Godot Engine](https://github.com/godotengine/godot) 3.2+ extension
+This is a [Godot Engine](https://github.com/godotengine/godot) 3.3+ extension
 implemented as a
 [C++ module](https://docs.godotengine.org/en/latest/development/cpp/custom_modules_in_cpp.html).
 
@@ -31,7 +31,12 @@ implemented components.
 For a complete list of currently implemented classes, refer to
 [Goost API](https://goost.readthedocs.io/en/gd3/classes/index.html).
 
----
+## 🔽 Binary downloads
+
+Official binaries for the Godot + Goost editor and the export templates can be
+found on Goost's [Download](https://goostengine.github.io/download.html) page.
+
+-----
 
 ### Goals 🎯
 - ***Complement*** the engine by implementing missing or not-yet-implemented
@@ -56,7 +61,7 @@ For a complete list of currently implemented classes, refer to
   [goostengine/godot-modules](https://github.com/goostengine/godot-modules)
   repository, which also includes this extension as a `git` submodule.
 
----
+-----
 
 ### Community channels 🎭
 
@@ -64,7 +69,7 @@ Join [#goost](https://discord.gg/w6jBZnG) Discord channel at the
 [GEL](https://github.com/godot-extended-libraries) Discord server for discussion
 and development updates.
 
----
+-----
 
 ## Building 🏗
 
@@ -83,6 +88,7 @@ proceed to [GitHub Actions tab](https://github.com/goostengine/goost/actions) (h
 ```sh
 git clone https://github.com/goostengine/goost
 cd goost
+python goost.py config # Optional, pick components to build.
 scons
 ```
 

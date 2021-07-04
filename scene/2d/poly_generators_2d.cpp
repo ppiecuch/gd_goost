@@ -1,5 +1,5 @@
 #include "poly_generators_2d.h"
-#include "core/math/2d/geometry/goost_geometry_2d.h"
+#include "core/math/geometry/2d/goost_geometry_2d.h"
 
 // PolyCircle2D
 
