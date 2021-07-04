@@ -1,9 +1,9 @@
 #include "editor_about.h"
 #include "editor/editor_node.h"
 
-#include "goost/core/authors.gen.h"
-#include "goost/core/license.gen.h"
-#include "goost/core/version.gen.h"
+#include "core/authors.gen.h"
+#include "core/license.gen.h"
+#include "core/version.gen.h"
 
 // Implementation based on EditorAbout:
 // https://github.com/godotengine/godot/blob/master/editor/editor_about.cpp

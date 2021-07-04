@@ -1,7 +1,7 @@
 #include "register_math_types.h"
 #include "geometry/register_geometry_types.h"
 
-#include "register_types.h"
+#include "register_goost.h"
 #include "classes_enabled.gen.h"
 
 static Ref<Random> _random;

@@ -1,4 +1,5 @@
 #include "register_types.h"
+#include "register_goost.h"
 
 #include "core/engine.h"
 

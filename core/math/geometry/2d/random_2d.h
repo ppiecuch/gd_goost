@@ -1,7 +1,7 @@
 #ifndef GOOST_RANDOM_2D_H
 #define GOOST_RANDOM_2D_H
 
-#include "goost/core/math/random.h"
+#include "core/math/random.h"
 
 class Random2D : public RandomNumberGenerator {
 	GDCLASS(Random2D, RandomNumberGenerator);
@@ -16,7 +16,7 @@ public:
 	static Random2D *get_singleton() { return singleton; }
 	virtual Ref<Reference> new_instance() const { return memnew(Random2D); }
 
-#	include "../random_base.inl.h"
+#	include "../../random_base.inl.h"
 
 	real_t get_rotation();
 	Vector2 get_direction(); // Unit vector.

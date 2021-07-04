@@ -37,13 +37,13 @@ def get_components(config={}, enabled_by_default=True):
             config[name] = enabled_by_default
 
     components_enabled = []
-    components_enabled = component_list.copy()
+    components_enabled = list(component_list)
     components_disabled = []
-    components_disabled = component_list.copy()
+    components_disabled = list(component_list)
 
     try:
         if enabled_by_default:
-            components_disabled.clear()
+            components_disabled = []
             for name, enabled in config.items():
                 if not enabled:
                     if not name in component_list:
@@ -51,7 +51,7 @@ def get_components(config={}, enabled_by_default=True):
                     components_enabled.remove(name)
                     components_disabled.append(name)
         else:
-            components_enabled.clear()
+            components_enabled = []
             for name, enabled in config.items():
                 if enabled:
                     if not name in component_list:
@@ -237,7 +237,7 @@ def get_classes(config={}, enabled_by_default=True):
         classes_disabled.append(c)
     try:
         if enabled_by_default:
-            classes_disabled.clear()
+            classes_disabled = []
             for name, enabled in config.items():
                 if not enabled:
                     if not name in classes:
@@ -245,7 +245,7 @@ def get_classes(config={}, enabled_by_default=True):
                     classes_enabled.remove(name)
                     classes_disabled.append(name)
         else:
-            classes_enabled.clear()
+            classes_enabled = []
             for name, enabled in config.items():
                 if enabled:
                     if not name in classes:

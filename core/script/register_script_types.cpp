@@ -1,7 +1,7 @@
 #include "register_script_types.h"
 
-#include "goost/register_types.h"
-#include "goost/classes_enabled.gen.h"
+#include "register_goost.h"
+#include "classes_enabled.gen.h"
 
 #include "mixin_script/mixin_script.h"
 #include "mixin_script/editor/mixin_script_editor.h"

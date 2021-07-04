@@ -1,7 +1,7 @@
 #include "register_core_types.h"
 
 #include "classes_enabled.gen.h"
-#include "register_types.h"
+#include "register_goost.h"
 
 #include "core/engine.h"
 #include "scene/main/scene_tree.h"

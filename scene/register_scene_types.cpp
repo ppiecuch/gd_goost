@@ -1,7 +1,7 @@
 #include "register_scene_types.h"
 
 #include "classes_enabled.gen.h"
-#include "register_types.h"
+#include "register_goost.h"
 
 #include "physics/register_physics_types.h"
 
