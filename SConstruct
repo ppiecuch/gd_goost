@@ -6,7 +6,7 @@
 #
 # `SConstruct` which allows to build any C++ module just like Godot Engine.
 #
-# Usage: 
+# Usage:
 # 1. Copy this `SConstruct` to your module's source root.
 # 2. Compile the module with the same build command, for instance:
 #
@@ -32,7 +32,7 @@ module_name = os.path.basename(Dir(".").abspath)
 print("Configuring %s module ..." % module_name.capitalize())
 
 # Environment variables (can override default build options).
-godot_version = os.getenv("GODOT_VERSION", "3.x") # A branch, commit, tag etc.
+godot_version = os.getenv("GODOT_VERSION", "3.x")  # A branch, commit, tag etc.
 
 # Find a path to Godot source to build with this module.
 godot_dir = Dir("godot")
@@ -56,7 +56,11 @@ opts = Variables("custom.py", ARGUMENTS)
 opts.Add("godot_version", "Godot version (branch, tags, commit hashes)", godot_version)
 opts.Add(BoolVariable("godot_sync", "Synchronize Godot version from the remote URL before building", False))
 opts.Add(BoolVariable("godot_modules_enabled", "Build all Godot builtin modules", True))
-opts.Add(BoolVariable("use_godot_patches", "Apply custom fixes and small enhancements to Godot source before building", False))
+opts.Add(
+    BoolVariable(
+        "use_godot_patches", "Apply custom fixes and small enhancements to Godot source before building", False
+    )
+)
 opts.Add("godot_patches", "A directory path containing custom Godot patches", "misc/patches")
 
 # Generate help text.
@@ -75,10 +79,10 @@ GODOT_SOURCE_PATH: a directory path to the existing Godot source code.
 GODOT_REPO_URL: URL from which the engine source code is fetched.
     Current: {url}
 """.format(
-    module = module_name.capitalize(),
-    version = env["godot_version"],
-    path = godot_dir,
-    url = godot_url,
+    module=module_name.capitalize(),
+    version=env["godot_version"],
+    path=godot_dir,
+    url=godot_url,
 )
 Help(help_msg, append=True)
 
@@ -89,16 +93,18 @@ def run(args, dir="."):
     else:
         return subprocess.run(args, check=True, cwd=dir).returncode
 
+
 def godot_check_if_branch(ref):
     try:
-        return run(["git", "show-ref", "--verify", "--quiet", 
-                "refs/heads/%s" % ref], godot_dir.abspath) == 0
+        return run(["git", "show-ref", "--verify", "--quiet", "refs/heads/%s" % ref], godot_dir.abspath) == 0
     except:
         return False
+
 
 def godot_verify_min_version():
     sys.path.insert(0, godot_dir.abspath)
     import version
+
     compatible = (version.major, version.minor, version.patch) >= (3, 3, 0)
     if not compatible:
         print("Cannot compile %s without `custom_modules` support." % module_name.capitalize())
@@ -106,6 +112,7 @@ def godot_verify_min_version():
     sys.path.remove(godot_dir.abspath)
     sys.modules.pop("version")
     return compatible
+
 
 if godot_dir == Dir("godot"):
     if not godot_dir.exists():
@@ -191,6 +198,7 @@ if env["use_godot_patches"] and godot_dir == Dir("godot") and not skip_build:
 
     # Collect patches.
     from glob import glob
+
     patches = []
     for ext in ["*.patch", "*.diff"]:
         patches += glob(os.path.join(patches_dir.abspath, ext))
@@ -210,7 +218,7 @@ if env["use_godot_patches"] and godot_dir == Dir("godot") and not skip_build:
             print("Failed to apply Godot patch: " + p)
             print(e)
             Exit()
- 
+
 if not skip_build:
     print("Building Godot with %s ..." % module_name.capitalize())
 

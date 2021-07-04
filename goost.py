@@ -50,12 +50,13 @@ def get_child_components(parent):
 # each of the class in the future.
 #
 class GoostClass:
-   def __init__(self, name, deps=[]):
-      self.name = name
-      self.deps = []
+    def __init__(self, name, deps=[]):
+        self.name = name
+        self.deps = []
 
-   def add_depencency(self, goost_class):
-      self.deps.append(goost_class)
+    def add_depencency(self, goost_class):
+        self.deps.append(goost_class)
+
 
 classes = [
     "GoostEngine",
@@ -110,18 +111,22 @@ classes["PolyShape2D"].add_depencency(classes["PolyNode2D"])
 classes["PolyCollisionShape2D"].add_depencency(classes["PolyNode2D"])
 classes["Random2D"].add_depencency(classes["Random"])
 
+
 def resolve_dependency(goost_class):
     resolved = set()
+
     def resolve(c, r_resolved):
         for n in c.deps:
             resolve(n, r_resolved)
         r_resolved.add(c)
+
     resolve(goost_class, resolved)
     resolved_list = []
     for c in resolved:
         resolved_list.append(c.name)
     return resolved_list
-    
+
+
 classes_enabled = []
 for c in classes:
     classes_enabled.append(c)
@@ -130,6 +135,7 @@ classes_disabled = []
 
 try:
     import custom
+
     try:
         classes_disabled = custom.goost_classes_disabled
         for c in classes_disabled:

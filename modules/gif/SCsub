@@ -1,18 +1,12 @@
 #!/usr/bin/env python
 
-Import('env')
-Import('env_modules')
+Import("env")
+Import("env_modules")
 
 env_gif = env_modules.Clone()
 
 thirdparty_dir = "./thirdparty/giflib/"
-thirdparty_sources = [
-    "gif_err.c",
-    "dgif_lib.c",
-    "gifalloc.c",
-    "gif_hash.c",
-    "openbsd-reallocarray.c"
-]
+thirdparty_sources = ["gif_err.c", "dgif_lib.c", "gifalloc.c", "gif_hash.c", "openbsd-reallocarray.c"]
 thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
 
 env_gif.Prepend(CPPPATH=[thirdparty_dir])

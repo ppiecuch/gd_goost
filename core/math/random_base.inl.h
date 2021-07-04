@@ -90,3 +90,5 @@ void shuffle(Array p_array) {
 		p_array[j] = tmp;
 	}
 }
+
+bool decision(float probability) { return randf() <= probability; }
