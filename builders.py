@@ -8,18 +8,16 @@ def make_classes_enabled(target, source, env):
     h = open(target[0].abspath, "w")
 
     h.write("// THIS FILE IS GENERATED, DO NOT EDIT!\n\n")
-    h.write("#pragma once\n\n")
+    h.write("#include \"goost.h\"\n\n")
     for c in env["goost_classes_enabled"]:
         h.write("#define GOOST_%s\n" % c)
     h.write("\n")
-    h.write("namespace goost {\n")
     for c in env["goost_classes_disabled"]:
         if c in goost.module_classes:
             # Modules are self-contained just like Goost,
             # we cannot disable individual classes from there.
             continue
-        h.write("template <> void register_class<%s>();\n" % c)
-    h.write("}\n")
+        h.write("template <> void ClassDB::register_class<%s>();\n" % c)
     h.close()
 
     # NOTE: it's not required to generate this file if there are no classes
@@ -27,17 +25,14 @@ def make_classes_enabled(target, source, env):
     # rebuilt again by SCons, even if no changes were done to "goost.py".
     cpp = open(target[1].abspath, "w")
     cpp.write("// THIS FILE IS GENERATED, DO NOT EDIT!\n\n")
-    cpp.write("#include \"register_types.h\"\n")
     cpp.write("#include \"classes_enabled.gen.h\"\n")
     cpp.write("\n")
-    cpp.write("namespace goost {\n")
     for c in env["goost_classes_disabled"]:
         if c in goost.module_classes:
             # Modules are self-contained just like Goost,
             # we cannot disable individual classes from there.
             continue
-        cpp.write("template <> void register_class<%s>() {}\n" % c)
-    cpp.write("}\n")
+        cpp.write("template <> void ClassDB::register_class<%s>() {}\n" % c)
     cpp.close()
 
 

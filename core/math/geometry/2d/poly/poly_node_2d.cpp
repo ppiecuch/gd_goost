@@ -83,7 +83,7 @@ void PolyNode2D::_notification(int p_what) {
 		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_PARENTED: {
 			parent = Object::cast_to<PolyNode2D>(get_parent());
-			queue_update();
+			_queue_update();
 		} break;
 		case NOTIFICATION_DRAW: {
 			if (!is_inside_tree()) {
@@ -94,17 +94,17 @@ void PolyNode2D::_notification(int p_what) {
 		case NOTIFICATION_LOCAL_TRANSFORM_CHANGED:
 		case NOTIFICATION_VISIBILITY_CHANGED:
 		case NOTIFICATION_EXIT_TREE: {
-			queue_update();
+			_queue_update();
 		} break;
 	}
 }
 
-void PolyNode2D::queue_update() {
+void PolyNode2D::_queue_update() {
 	if (!is_inside_tree()) {
 		return;
 	}
 	if (parent) {
-		parent->queue_update();
+		parent->_queue_update();
 	} else if (!update_queued) {
 		call_deferred("_update_outlines");
 	}
@@ -213,17 +213,17 @@ void PolyNode2D::_validate_property(PropertyInfo &property) const {
 
 void PolyNode2D::set_points(const Vector<Point2> &p_points) {
 	points = p_points;
-	queue_update();
+	_queue_update();
 }
 
 void PolyNode2D::set_operation(Operation p_operation) {
 	operation = p_operation;
-	queue_update();
+	_queue_update();
 }
 
 void PolyNode2D::set_open(bool p_open) {
 	open = p_open;
-	queue_update();
+	_queue_update();
 	_change_notify();
 }
 
@@ -363,8 +363,6 @@ void PolyNode2D::clear() {
 }
 
 void PolyNode2D::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("_update_outlines"), &PolyNode2D::_update_outlines);
-
 	ClassDB::bind_method(D_METHOD("set_points", "points"), &PolyNode2D::set_points);
 	ClassDB::bind_method(D_METHOD("get_points"), &PolyNode2D::get_points);
 
@@ -417,6 +415,9 @@ void PolyNode2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("build_outlines"), &PolyNode2D::build_outlines_array);
 
 	ClassDB::bind_method(D_METHOD("clear"), &PolyNode2D::clear);
+
+	ClassDB::bind_method(D_METHOD("_update_outlines"), &PolyNode2D::_update_outlines);
+	ClassDB::bind_method(D_METHOD("_queue_update"), &PolyNode2D::_queue_update);
 
 	ADD_PROPERTY(PropertyInfo(Variant::POOL_VECTOR2_ARRAY, "points"), "set_points", "get_points");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "operation", PROPERTY_HINT_ENUM, "None,Union,Difference,Intersection,Xor"), "set_operation", "get_operation");

@@ -132,21 +132,6 @@ func test_insert_after_back():
 	assert_eq(list.back.value, "Godot")
 
 
-func test_insert_after_null():
-	populate_test_data(list)
-	var _n = list.insert_after(null, "Godot")
-	assert_eq(list.back.value, "Godot")
-
-
-func test_insert_before_null():
-	populate_test_data(list)
-	var _n = list.insert_before(null, "Godot")
-	# Not sure about this, see issue upstream from which this was ported:
-	# https://github.com/godotengine/godot/issues/42116
-	# But consistency with builtin List<Variant> is more important currently.
-	assert_eq(list.back.value, "Godot")
-
-
 func test_size():
 	var nodes = populate_test_data(list)
 	var original_size = nodes.size()
@@ -178,21 +163,12 @@ func test_erase():
 	assert_false(erased)
 
 
-func test_remove():
-	var nodes = populate_test_data(list)
-	var original_size = nodes.size()
-	var removed = list.remove(list.find("Goost"))
-	assert_true(removed)
-	assert_eq(list.size(), original_size - 1)
-	assert_null(list.find("Goost"))
-
-
 func test_empty():
 	populate_test_data(list)
 	var n: ListNode = list.front
 	while n:
-		var removed = list.remove(n)
-		assert_true(removed)
+		n.free()
+		assert_freed(n, "Freed")
 		n = list.front
 	assert_eq(list.size(), 0)
 
@@ -204,6 +180,8 @@ func test_clear():
 	assert_null(list.find("Goost"))
 	assert_null(list.find(37))
 	assert_null(list.find(Color.blue))
+	# Should not crash, must have ListData still available.
+	var _n = list.push_back("It's alive!")
 
 
 func test_next():
@@ -563,19 +541,19 @@ func test_create_from_dictionary():
 	assert_eq(list.back.get_meta("value"), Color.blue)
 
 
-func test_list_node_erase():
+func test_list_node_free():
 	var nodes = populate_test_data(list)
 	assert_not_null(nodes[0])
 	assert_not_null(list.find("Goost"))
-	nodes[0].erase()
+	nodes[0].free()
 	assert_freed(nodes[0], "List node")
 	assert_null(list.find("Goost"))
 
 
-func test_list_node_erase_orphan():
+func test_list_node_free_orphan():
 	var n = ListNode.new()
 	n.value = "Goost"
-	n.erase() # Should not crash.
+	n.free() # Should not crash.
 	assert_freed(n, "List node")
 
 
@@ -606,10 +584,8 @@ func test_list_inside_list_node__via_manual_value_set():
 	var n = list.front
 	n.value = new_list
 
-	# FIXME: the following doesn't work, throws an error:
-	# 'Invalid set index 'front' (on base: 'LinkedList') with value of type 'ListNode'.'
-	# Despite the fact that `new_list` is NOT a `ListNode`,
-	# and the referenced `front` property is incorrect (the above works).
+	# FIXME: the following doesn't work, throws an error.
+	# See https://github.com/goostengine/goost/issues/17
 	#
 	# list.front.value = new_list
 
@@ -638,3 +614,87 @@ func test_cleanup():
 	assert_not_null(n)
 	list = null
 	assert_freed(list, "List")
+
+
+class TestInvalidData extends "res://addons/gut/test.gd":
+	var list: LinkedList
+
+	func before_all():
+		Engine.print_error_messages = false
+
+	func before_each():
+		list = LinkedList.new()
+
+	func after_all():
+		Engine.print_error_messages = true
+
+	# Goost fails on null rather than pushing to back.
+	# See https://github.com/godotengine/godot/issues/42116.
+	func test_insert_after_null():
+		var _n = list.push_back(Color.blue)
+		_n = list.insert_after(null, "Godot")
+		assert_eq(list.back.value, Color.blue)
+
+	# Goost fails on null rather than pushing to front.
+	# See https://github.com/godotengine/godot/issues/42116.
+	func test_insert_before_null():
+		var _n = list.push_back(Color.blue)
+		_n = list.insert_before(null, "Godot")
+		assert_eq(list.back.value, Color.blue)
+
+	func test_swap():
+		var node_a = ListNode.new()
+		var node_b = ListNode.new()
+		list.swap(node_a, node_b)
+		list.swap(null, node_b)
+		list.swap(node_a, null)
+		assert_true(list.empty())
+		node_a.free()
+		node_b.free()
+
+	func test_insert_before_after():
+		var n = list.insert_before(null, Array([]))
+		assert_null(n)
+		var node = ListNode.new()
+		n = list.insert_after(node, Array([]))
+		node.free()
+		assert_null(n)
+		assert_true(list.empty())
+
+	func test_move_to_front():
+		list.move_to_front(null)
+		var node = ListNode.new()
+		list.move_to_front(node)
+		node.free()
+		assert_true(list.empty())
+
+	func test_move_to_back():
+		list.move_to_back(null)
+		var node = ListNode.new()
+		list.move_to_back(node)
+		node.free()
+		assert_true(list.empty())
+
+	func test_move_before():
+		list.move_before(null, null)
+		var node_a = ListNode.new()
+		list.move_before(null, node_a)
+		node_a.free()
+		var node_b = ListNode.new()
+		list.move_before(node_b, null)
+		node_b.free()
+		assert_true(list.empty())
+
+	func test_iter():
+		var _n = list.push_front(Array([]))
+		list._iter_init(Array([]))
+		list.clear()
+		var _v = list._iter_get(Array([]))
+		assert_true(list.empty())
+
+	func test_iter_2():
+		var _n = list.push_back(AnimationNodeOneShot.new())
+		list._iter_init(Array([]))
+		list.pop_front()
+		var _v = list._iter_get(Array([]))
+		assert_true(list.empty())

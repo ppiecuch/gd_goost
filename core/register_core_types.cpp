@@ -1,8 +1,5 @@
 #include "register_core_types.h"
 
-#include "classes_enabled.gen.h"
-#include "register_goost.h"
-
 #include "core/engine.h"
 #include "scene/main/scene_tree.h"
 
@@ -16,6 +13,8 @@
 #include "types/editor/variant_resource_preview.h"
 #endif
 
+#include "classes_enabled.gen.h"
+
 namespace goost {
 
 static GoostEngine *_goost = nullptr;
@@ -25,20 +24,25 @@ static void _variant_resource_preview_init();
 #endif
 
 void register_core_types() {
+	ClassDB::register_class<CommandLineOption>();
+	ClassDB::register_class<CommandLineHelpFormat>();
+	ClassDB::register_class<CommandLineParser>();
+
 #ifdef GOOST_GoostEngine
 	_goost = memnew(GoostEngine);
-	goost::register_class<GoostEngine>();
+	ClassDB::register_class<GoostEngine>();
 	Engine::get_singleton()->add_singleton(
 			Engine::Singleton("GoostEngine", GoostEngine::get_singleton()));
 	SceneTree::add_idle_callback(&GoostEngine::flush_calls);
 #endif
-	goost::register_class<InvokeState>();
+	ClassDB::register_class<InvokeState>();
 
-	goost::register_class<ListNode>();
-	goost::register_class<LinkedList>();
+	ClassDB::register_class<ListNode>();
+	ClassDB::register_class<LinkedList>();
 
-	goost::register_class<VariantMap>();
-	goost::register_class<VariantResource>();
+	ClassDB::register_class<VariantMap>();
+	ClassDB::register_class<VariantResource>();
+
 #if defined(TOOLS_ENABLED) && defined(GOOST_VariantResource)
 	EditorNode::add_init_callback(_variant_resource_preview_init);
 #endif

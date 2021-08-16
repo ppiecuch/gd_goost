@@ -189,8 +189,6 @@ func test_pixel_line():
 
 func test_pixel_circle():
 	var circle = GoostGeometry2D.pixel_circle(16)
-	# for i in circle.size():
-		# gut.p("%s: %s" % [i, circle[i]])
 	assert_eq(circle.size(), 96)
 	assert_eq(circle[0], Vector2(16, 0))
 	assert_eq(circle[3], Vector2(16, 0))
@@ -241,6 +239,16 @@ func test_simplify_polyline():
 		return
 	for i in simplified.size():
 		assert_eq(simplified[i], control[i])
+
+
+func test_simplify_polyline_zero_epsilon():
+	var input = PoolVector2Array([
+		Vector2(-2.182464, -3.504493),
+		Vector2(-2.662979, -1.333622),
+		Vector2(2.71501, 1.567903),
+	])
+	var simplified = GoostGeometry2D.simplify_polyline(input, 0)
+	assert_eq(input.size(), simplified.size())
 
 
 func test_smooth_polygon():

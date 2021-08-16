@@ -38,6 +38,8 @@ if env["goost_image_enabled"]:
 
     if env_goost["target"] in ["debug", "release_debug"]:
         env_leptonica.Prepend(CPPDEFINES=["DEBUG"])
+        # Print warning and higher messages, no info messages.
+        env_leptonica.Prepend(CPPDEFINES=[("MINIMUM_SEVERITY", "4")])
     if env_goost["target"] != "debug":
         env_leptonica.Prepend(CPPDEFINES=["NO_CONSOLE_IO"])
     env_leptonica.disable_warnings()

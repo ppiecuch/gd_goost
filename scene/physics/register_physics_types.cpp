@@ -1,15 +1,14 @@
 #include "register_physics_types.h"
 
-#include "register_goost.h"
 #include "classes_enabled.gen.h"
 
 namespace goost {
 
 void register_physics_types() {
-	goost::register_class<ShapeCast2D>();
+	ClassDB::register_class<ShapeCast2D>();
 
 #if defined(GOOST_GEOMETRY_ENABLED) && defined(GOOST_PolyNode2D) && defined(GOOST_PolyShape2D)
-	goost::register_class<PolyCollisionShape2D>();
+	ClassDB::register_class<PolyCollisionShape2D>();
 #endif
 }
 

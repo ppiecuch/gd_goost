@@ -1,5 +1,4 @@
-#ifndef GOOST_RANDOM_2D_H
-#define GOOST_RANDOM_2D_H
+#pragma once
 
 #include "core/math/random.h"
 
@@ -34,4 +33,3 @@ public:
 	}
 };
 
-#endif // GOOST_RANDOM_2D_H

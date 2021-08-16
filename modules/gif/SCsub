@@ -6,7 +6,18 @@ Import("env_modules")
 env_gif = env_modules.Clone()
 
 thirdparty_dir = "./thirdparty/giflib/"
+<<<<<<< HEAD
 thirdparty_sources = ["gif_err.c", "dgif_lib.c", "gifalloc.c", "gif_hash.c", "openbsd-reallocarray.c"]
+=======
+thirdparty_sources = [
+    "gif_err.c",
+    "dgif_lib.c",
+    "egif_lib.c",
+    "gifalloc.c",
+    "gif_hash.c",
+    "openbsd-reallocarray.c"
+]
+>>>>>>> 8ce4c67cebeda9d6aafc690fd3e4984843e16315
 thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
 
 env_gif.Prepend(CPPPATH=[thirdparty_dir])

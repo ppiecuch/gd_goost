@@ -1,5 +1,4 @@
-#ifndef GOOST_SHAPE_CAST_2D_H
-#define GOOST_SHAPE_CAST_2D_H
+#pragma once
 
 #include "scene/2d/node_2d.h"
 #include "scene/resources/shape_2d.h"
@@ -47,7 +46,7 @@ public:
 	void set_shape(const Ref<Shape2D> &p_shape);
 	Ref<Shape2D> get_shape() const;
 
-	// TODO: rename to `target_position` in Godot 4.0.
+	// TODO: rename to `target_position` in Godot 4.x.
 	void set_cast_to(const Vector2 &p_point);
 	Vector2 get_cast_to() const;
 
@@ -93,4 +92,3 @@ public:
 	ShapeCast2D() {};
 };
 
-#endif // GOOST_SHAPE_CAST_2D_H

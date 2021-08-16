@@ -4,8 +4,8 @@
 
 const int ImageIndexed::MAX_PALETTE_SIZE = 256;
 
-ImageIndexedMemLoadFunc ImageIndexed::_indexed_png_mem_loader_func = NULL;
-SaveIndexedPNGFunc ImageIndexed::save_indexed_png_func = NULL;
+ImageIndexedMemLoadFunc ImageIndexed::_indexed_png_mem_loader_func = nullptr;
+SaveIndexedPNGFunc ImageIndexed::save_indexed_png_func = nullptr;
 
 Error ImageIndexed::create_indexed(int p_num_palette_entries) {
 	ERR_FAIL_COND_V(empty(), ERR_UNCONFIGURED);
@@ -406,30 +406,31 @@ Error ImageIndexed::load_indexed_png(const String &p_path) {
 	Error err;
 	PoolVector<uint8_t> buffer;
 
-	FileAccess *fr = FileAccess::open(p_path, FileAccess::READ, &err);
-	if (!fr) {
+	FileAccess *f = FileAccess::open(p_path, FileAccess::READ, &err);
+	if (!f) {
 		ERR_PRINT("Error opening file: " + p_path);
 		return err;
 	}
 
-	int len = fr->get_len();
+	int len = f->get_len();
 	buffer.resize(len);
 	PoolVector<uint8_t>::Write w = buffer.write();
 	uint8_t *png = w.ptr();
-	fr->get_buffer(png, len);
+	f->get_buffer(png, len);
 
 	if (_indexed_png_mem_loader_func) {
 		Ref<ImageIndexed> img = _indexed_png_mem_loader_func(png, len);
 		copy_internals_from(img);
 		create_indexed_from_data(img->get_palette_data(), img->get_index_data());
 	}
-	memdelete(fr);
+	f->close();
+	memdelete(f);
 
 	return err;
 }
 
 Error ImageIndexed::save_indexed_png(const String &p_path) const {
-	if (save_indexed_png_func == NULL)
+	if (save_indexed_png_func == nullptr)
 		return ERR_UNAVAILABLE;
 
 	return save_indexed_png_func(p_path, Ref<ImageIndexed>((ImageIndexed *)this));

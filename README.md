@@ -17,24 +17,24 @@
 ![🍏 iOS](https://github.com/goostengine/goost/workflows/%F0%9F%8D%8F%20iOS/badge.svg)
 ![🌐 JavaScript](https://github.com/goostengine/goost/workflows/%F0%9F%8C%90%20JavaScript/badge.svg)
 
-This is a [Godot Engine](https://github.com/godotengine/godot) 3.3+ extension
+Goost is a [Godot Engine](https://github.com/godotengine/godot) extension
 implemented as a
 [C++ module](https://docs.godotengine.org/en/latest/development/cpp/custom_modules_in_cpp.html).
-
 The extension consists of functional components and other modules, most of which
 should be optional to build.
 
 See [Goost official documentation](https://goost.readthedocs.io/en/gd3/) for
-detailed instructions on how to use the module, and the list of currently
-implemented components.
+detailed instructions on how to use the extension and the list of currently
+implemented components. For a complete list of currently implemented classes,
+refer to [Goost API](https://goost.readthedocs.io/en/gd3/classes/index.html).
 
-For a complete list of currently implemented classes, refer to
-[Goost API](https://goost.readthedocs.io/en/gd3/classes/index.html).
+Note that Goost is *not* an engine fork, please have a look at our
+[development philosophy](https://goost.readthedocs.io/en/latest/development/general_principles.html).
 
 ## 🔽 Binary downloads
 
 Official binaries for the Godot + Goost editor and the export templates can be
-found on Goost's [Download](https://goostengine.github.io/download.html) page.
+found on the [Download](https://goostengine.github.io/download.html) page.
 
 -----
 
@@ -73,12 +73,14 @@ and development updates.
 
 ## Building 🏗
 
-For testing purposes, build artifacts are uploaded for Linux, macOS, and Windows
-editor builds and can be downloaded manually for each recently built commit:
+For testing and debugging purposes, build artifacts are uploaded for Linux,
+macOS, and Windows builds which can be downloaded manually for each recently
+built commit:
 
-- [🐧 Linux](https://nightly.link/goostengine/goost/workflows/linux_builds/gd3/godot.x11.opt.tools.64.goost.mono.zip)
-- [🍎 macOS](https://nightly.link/goostengine/goost/workflows/macos_builds/gd3/godot.osx.opt.tools.64.goost.zip)
-- [🎨 Windows](https://nightly.link/goostengine/goost/workflows/windows_builds/gd3/godot.windows.opt.tools.64.goost.zip)
+- [🐧 `Linux`: Editor + Mono](https://nightly.link/goostengine/goost/workflows/linux_builds/gd3/godot.x11.opt.tools.64.goost.mono.zip)
+- [🐧 `Linux`: Server Headless + Sanitizers](https://nightly.link/goostengine/goost/workflows/linux_builds/gd3/godot_server.x11.tools.64.goosts.zip)
+- [🍎 `macOS`: Editor](https://nightly.link/goostengine/goost/workflows/macos_builds/gd3/godot.osx.opt.tools.64.goost.zip)
+- [🎨 `Windows`: Editor](https://nightly.link/goostengine/goost/workflows/windows_builds/gd3/godot.windows.opt.tools.64.goost.zip)
 
 If the links provided by [nightly.link](https://nightly.link/) above don't work,
 proceed to [GitHub Actions tab](https://github.com/goostengine/goost/actions) (have to be logged in).
@@ -86,7 +88,7 @@ proceed to [GitHub Actions tab](https://github.com/goostengine/goost/actions) (h
 ### Compiling
 
 ```sh
-git clone https://github.com/goostengine/goost
+git clone https://github.com/goostengine/goost --recurse-submodules
 cd goost
 python goost.py config # Optional, pick components to build.
 scons
@@ -161,4 +163,4 @@ Unless otherwise specified, the extension is released under the
 [MIT license](LICENSE.txt).
 
 See the full list of third-party libraries with their licenses used by this
-extension at [thirdparty/README.md](thirdparty/README.md) (MIT compatible).
+extension at [thirdparty/README.md](thirdparty/README.md).

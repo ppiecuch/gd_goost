@@ -1,5 +1,4 @@
-#ifndef GOOST_POLY_NODE_2D_H
-#define GOOST_POLY_NODE_2D_H
+#pragma once
 
 #include "scene/2d/node_2d.h"
 
@@ -47,6 +46,7 @@ protected:
 	Vector<Vector<Point2>> outlines;
 	void _update_outlines();
 	virtual Vector<Vector<Point2>> _build_outlines();
+	void _queue_update();
 
 public:
 	void set_points(const Vector<Point2> &p_points);
@@ -100,7 +100,6 @@ public:
 	Vector<Vector<Point2>> build_outlines(); // Immediate.
 	Array get_outlines_array();
 	Array build_outlines_array();
-	void queue_update();
 
 	void clear();
 
@@ -121,4 +120,3 @@ struct VariantCaster<PolyNode2D *> {
 	}
 };
 
-#endif // GOOST_POLY_NODE_2D_H

@@ -1,6 +1,6 @@
 #include "linked_list.h"
 
-bool ListData::erase(ListNode *p_I) {
+bool ListData::remove(ListNode *p_I) {
 	ERR_FAIL_COND_V(!p_I, false);
 	ERR_FAIL_COND_V(p_I->data != this, false);
 
@@ -16,8 +16,13 @@ bool ListData::erase(ListNode *p_I) {
 	if (p_I->next_ptr) {
 		p_I->next_ptr->prev_ptr = p_I->prev_ptr;
 	}
-	memdelete(p_I);
+	// Deletion is handled by user code after NOTIFICATION_PREDELETE, not here.
+	// memdelete(p_I);
 	size_cache--;
+
+	p_I->next_ptr = nullptr;
+	p_I->prev_ptr = nullptr;
+	p_I->data = nullptr;
 
 	return true;
 }
@@ -57,12 +62,6 @@ void LinkedList::create_from(const Variant &p_value) {
 }
 
 ListNode *LinkedList::push_back(const Variant &value) {
-	if (!_data) {
-		_data = memnew(ListData);
-		_data->first = nullptr;
-		_data->last = nullptr;
-		_data->size_cache = 0;
-	}
 	ListNode *n = memnew(ListNode);
 	n->value = value;
 
@@ -84,18 +83,12 @@ ListNode *LinkedList::push_back(const Variant &value) {
 }
 
 void LinkedList::pop_back() {
-	if (_data && _data->last) {
-		remove(_data->last);
+	if (_data->last) {
+		memdelete(_data->last);
 	}
 }
 
 ListNode *LinkedList::push_front(const Variant &value) {
-	if (!_data) {
-		_data = memnew(ListData);
-		_data->first = nullptr;
-		_data->last = nullptr;
-		_data->size_cache = 0;
-	}
 	ListNode *n = memnew(ListNode);
 	n->value = value;
 	n->prev_ptr = 0;
@@ -116,8 +109,8 @@ ListNode *LinkedList::push_front(const Variant &value) {
 }
 
 void LinkedList::pop_front() {
-	if (_data && _data->first) {
-		remove(_data->first);
+	if (_data->first) {
+		memdelete(_data->first);
 	}
 }
 
@@ -136,11 +129,9 @@ Array LinkedList::get_elements() {
 }
 
 ListNode *LinkedList::insert_after(ListNode *p_node, const Variant &p_value) {
-	CRASH_COND(p_node && (!_data || p_node->data != _data));
+	ERR_FAIL_COND_V(!p_node, nullptr);
+	ERR_FAIL_COND_V(p_node->data != _data, nullptr);
 
-	if (!p_node) {
-		return push_back(p_value);
-	}
 	ListNode *n = memnew(ListNode);
 	n->value = p_value;
 	n->prev_ptr = p_node;
@@ -160,11 +151,9 @@ ListNode *LinkedList::insert_after(ListNode *p_node, const Variant &p_value) {
 }
 
 ListNode *LinkedList::insert_before(ListNode *p_node, const Variant &p_value) {
-	CRASH_COND(p_node && (!_data || p_node->data != _data));
+	ERR_FAIL_COND_V(!p_node, nullptr);
+	ERR_FAIL_COND_V(p_node->data != _data, nullptr);
 
-	if (!p_node) {
-		return push_back(p_value);
-	}
 	ListNode *n = memnew(ListNode);
 	n->value = p_value;
 	n->prev_ptr = p_node->prev_ptr;
@@ -183,18 +172,6 @@ ListNode *LinkedList::insert_before(ListNode *p_node, const Variant &p_value) {
 	return n;
 }
 
-bool LinkedList::remove(ListNode *p_I) {
-	if (_data && p_I) {
-		bool ret = _data->erase(p_I);
-		if (_data->size_cache == 0) {
-			memdelete(_data);
-			_data = nullptr;
-		}
-		return ret;
-	}
-	return false;
-};
-
 ListNode *LinkedList::find(const Variant &p_value) {
 	ListNode *it = get_front();
 	while (it) {
@@ -208,7 +185,11 @@ ListNode *LinkedList::find(const Variant &p_value) {
 
 bool LinkedList::erase(const Variant &p_value) {
 	ListNode *I = find(p_value);
-	return remove(I);
+	if (I) {
+		memdelete(I);
+		return true;
+	}
+	return false;
 }
 
 void LinkedList::swap(ListNode *p_A, ListNode *p_B) {
@@ -262,7 +243,9 @@ void LinkedList::invert() {
 }
 
 void LinkedList::move_to_back(ListNode *p_I) {
+	ERR_FAIL_COND(!p_I);
 	ERR_FAIL_COND(p_I->data != _data);
+
 	if (!p_I->next_ptr) {
 		return;
 	}
@@ -284,7 +267,9 @@ void LinkedList::move_to_back(ListNode *p_I) {
 }
 
 void LinkedList::move_to_front(ListNode *p_I) {
+	ERR_FAIL_COND(!p_I);
 	ERR_FAIL_COND(p_I->data != _data);
+
 	if (!p_I->prev_ptr) {
 		return;
 	}
@@ -306,6 +291,10 @@ void LinkedList::move_to_front(ListNode *p_I) {
 }
 
 void LinkedList::move_before(ListNode *p_A, ListNode *p_B) {
+	ERR_FAIL_COND(!p_A || !p_B);
+	ERR_FAIL_COND(p_A->data != _data);
+	ERR_FAIL_COND(p_B->data != _data);
+
 	if (p_A->prev_ptr) {
 		p_A->prev_ptr->next_ptr = p_A->next_ptr;
 	} else {
@@ -351,7 +340,6 @@ void LinkedList::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("find", "value"), &LinkedList::find);
 	ClassDB::bind_method(D_METHOD("erase", "value"), &LinkedList::erase);
-	ClassDB::bind_method(D_METHOD("remove", "node"), &LinkedList::remove);
 
 	ClassDB::bind_method(D_METHOD("empty"), &LinkedList::empty);
 	ClassDB::bind_method(D_METHOD("clear"), &LinkedList::clear);
@@ -381,7 +369,8 @@ Variant LinkedList::_iter_init(const Array &p_iter) {
 
 Variant LinkedList::_iter_next(const Array &p_iter) {
 #ifdef DEBUG_ENABLED
-	ERR_FAIL_NULL_V(_iter_current, Variant());
+	ERR_FAIL_COND_V_MSG(!ObjectDB::instance_validate(_iter_current), Variant(),
+			"ListNode was deleted while iterating LinkedList.");
 #endif
 	_iter_current = _iter_current->get_next();
 	return _iter_current != nullptr;
@@ -389,14 +378,15 @@ Variant LinkedList::_iter_next(const Array &p_iter) {
 
 Variant LinkedList::_iter_get(const Variant &p_iter) {
 #ifdef DEBUG_ENABLED
-	ERR_FAIL_NULL_V(_iter_current, Variant());
+	ERR_FAIL_COND_V_MSG(!ObjectDB::instance_validate(_iter_current), Variant(),
+			"ListNode was deleted while iterating LinkedList.");
 #endif
 	return _iter_current->get_value();
 }
 
 void LinkedList::clear() {
 	while (get_front()) {
-		remove(get_front());
+		memdelete(get_front());
 	}
 }
 
@@ -414,11 +404,13 @@ String LinkedList::to_string() {
 	return str;
 }
 
-void ListNode::erase() {
-	if (data) {
-		data->erase(this);
-	} else {
-		memdelete(this);
+void ListNode::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_PREDELETE: {
+			if (data) {
+				data->remove(this);
+			}
+		} break;
 	}
 }
 
@@ -429,11 +421,16 @@ void ListNode::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_value", "value"), &ListNode::set_value);
 	ClassDB::bind_method(D_METHOD("get_value"), &ListNode::get_value);
 
-	ClassDB::bind_method(D_METHOD("erase"), &ListNode::erase);
-
 	ADD_PROPERTY(PropertyInfo(Variant::NIL, "value", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NIL_IS_VARIANT), "set_value", "get_value");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "next"), "", "get_next");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "prev"), "", "get_prev");
+}
+
+LinkedList::LinkedList() {
+	_data = memnew(ListData);
+	_data->first = nullptr;
+	_data->last = nullptr;
+	_data->size_cache = 0;
 }
 
 LinkedList::~LinkedList() {

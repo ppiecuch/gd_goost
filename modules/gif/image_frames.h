@@ -1,5 +1,4 @@
-#ifndef IMAGE_FRAMES_H
-#define IMAGE_FRAMES_H
+#pragma once
 
 #include "core/image.h"
 
@@ -25,7 +24,9 @@ public:
 	Error load(const String &p_path, int max_frames = 0);
 	Error load_gif_from_buffer(const PoolByteArray &p_data, int max_frames = 0);
 
-	void add_frame(const Ref<Image> &p_image, float p_delay, int p_idx = -1);
+	Error save_gif(const String &p_path, int p_color_count = 256);
+
+	void add_frame(const Ref<Image> &p_image, float p_delay);
 	void remove_frame(int p_idx);
 
 	void set_frame_image(int p_idx, const Ref<Image> &p_image);
@@ -39,4 +40,3 @@ public:
 	void clear();
 };
 
-#endif // IMAGE_FRAMES_H

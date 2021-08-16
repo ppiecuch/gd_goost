@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Upstream: https://github.com/goostengine/goost
-# Version: 2.1.1 (Godot Engine 3.3+)
+# Version: 2.2 (Godot Engine 3.x)
 # License: MIT
 #
 # `SConstruct` which allows to build any C++ module just like Godot Engine.
@@ -26,10 +26,15 @@ import subprocess
 import config
 
 env = Environment()
+module_name = ""
 
-# Module name is determined from directory name.
-module_name = os.path.basename(Dir(".").abspath)
-print("Configuring %s module ..." % module_name.capitalize())
+try:
+    module_name = config.get_name()
+except:
+    # Infer module name from directory name.
+    module_name = os.path.basename(Dir(".").abspath)
+
+print("Configuring %s ..." % module_name.capitalize())
 
 # Environment variables (can override default build options).
 godot_version = os.getenv("GODOT_VERSION", "3.x")  # A branch, commit, tag etc.
@@ -117,7 +122,10 @@ def godot_verify_min_version():
 if godot_dir == Dir("godot"):
     if not godot_dir.exists():
         # Checkout Godot repository directly into this module.
-        run(["git", "clone", godot_url])
+        if os.getenv("CI"):
+            run(["git", "clone", "--depth", "1", godot_url, "--branch", env["godot_version"]])
+        else:
+            run(["git", "clone", godot_url])
         run(["git", "checkout", env["godot_version"], "--quiet"], godot_dir.abspath)
         if not godot_verify_min_version():
             Exit(255)
@@ -130,6 +138,11 @@ if godot_dir == Dir("godot"):
             Exit(255)
         if godot_check_if_branch(env["godot_version"]):
             run(["git", "pull"], godot_dir.abspath)
+
+if ARGUMENTS.get("skip_build") == "yes":
+    # We're only interested in cloning Godot repository given supplied version.
+    print("Skipping the build.")
+    Exit()
 
 # Setup base SCons arguments to the Godot build command.
 # Copy all from the command line, except for options in this SConstruct.

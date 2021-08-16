@@ -88,3 +88,14 @@ func test_decompose_polygons_convex_opt():
 	solution = PolyDecomp2D.decompose_polygons([poly_boundary], PolyDecomp2D.DECOMP_CONVEX_OPT)
 	assert_eq(solution.size(), 1)
 	assert_eq(solution[0].size(), 8)
+
+
+func test_decompose_polygon_empty():
+	Engine.print_error_messages = false
+
+	solution = PolyDecomp2D.decompose_polygons(Array([]), PolyDecomp2D.DECOMP_TRIANGLES_OPT)
+	assert_eq(solution.size(), 0)
+	solution = PolyDecomp2D.decompose_polygons(Array([]), PolyDecomp2D.DECOMP_CONVEX_OPT)
+	assert_eq(solution.size(), 0)
+
+	Engine.print_error_messages = true

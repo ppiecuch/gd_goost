@@ -1,19 +1,18 @@
 #include "register_script_types.h"
 
-#include "register_goost.h"
-#include "classes_enabled.gen.h"
-
-#include "mixin_script/mixin_script.h"
 #include "mixin_script/editor/mixin_script_editor.h"
 #include "mixin_script/editor/mixin_script_editor_plugin.h"
+#include "mixin_script/mixin_script.h"
 
 #include "core/script_language.h"
 #include "editor/editor_node.h"
 #include "editor/plugins/script_editor_plugin.h"
 
+#include "classes_enabled.gen.h"
+
 namespace goost {
 
-static MixinScriptLanguage *script_mixin_script = NULL;
+static MixinScriptLanguage *script_mixin_script = nullptr;
 
 #if defined(TOOLS_ENABLED) && defined(GOOST_MixinScript)
 static ScriptEditorBase *create_editor(const RES &p_resource) {

@@ -17,6 +17,16 @@ func after_each():
 	output.save_png("res://out/%s.png" % [gut._current_test.name])
 
 
+func test_replace_color():
+	var input = TestUtils.image_load(SAMPLES.rect_rgb)
+	output = input
+
+	GoostImage.replace_color(output, Color.red, Color.blue)
+	output.lock()
+	assert_eq(output.get_pixel(0, 0), Color.blue)
+	output.unlock()
+
+
 func test_resize_hqx2_rgb():
 	var input = TestUtils.image_load(SAMPLES.rect_rgb)
 	var input_size = input.get_size()
@@ -420,19 +430,6 @@ func test_render_svg():
 	file.close()
 
 
-func test_load_gif():
-	var image_frames = ImageFrames.new()
-	image_frames.load(SAMPLES.wip_gif)
-	assert_eq(image_frames.get_frame_count(), 3)
-	assert_almost_eq(image_frames.get_frame_delay(0), 0.1, 0.01)
-	output = Image.new()
-	output.copy_from(image_frames.get_frame_image(0))
-	output.lock()
-	assert_eq(output.get_pixel(0, 0), Color("#77b4c6"))
-	assert_eq(output.get_size(), Vector2(684, 37))
-	output.unlock()
-
-
 func test_bucket_fill_4_connected():
 	var input = TestUtils.image_load(SAMPLES.icon_binary)
 	input.convert(Image.FORMAT_RGBA8)
@@ -473,3 +470,31 @@ func test_bucket_fill_8_connected():
 	assert_eq(filled.get_pixel(45, 26), Color.red)
 	assert_eq(filled.get_pixel(62, 37), Color(0,0,0,0), "Should be black, not white.")
 	filled.unlock()
+
+
+class TestInvalidData extends "res://addons/gut/test.gd":
+	func before_all():
+		Engine.print_error_messages = false
+
+	func after_all():
+		Engine.print_error_messages = true
+
+	func test_null():
+		var image = null
+
+		GoostImage.replace_color(image, Color.red, Color.blue)
+		var _filled = GoostImage.bucket_fill(image, Vector2(), Color())
+		GoostImage.resize_hqx(image, 9000)
+		GoostImage.rotate(image, -9000, true)
+		GoostImage.rotate_90(image, -1)
+		GoostImage.rotate_180(image)
+		GoostImage.binarize(image, 0, false)
+		GoostImage.dilate(image, 9000)
+		GoostImage.erode(image, 9000)
+		GoostImage.morph(image, -1, Vector2(9000, -9000))
+		var _centroid = GoostImage.get_centroid(image)
+		var _average = GoostImage.get_pixel_average(image)
+		var _has = GoostImage.get_pixel_or_null(image, -1, -1)
+		_has = GoostImage.get_pixelv_or_null(image, Vector2(-1, 1))
+
+		assert_null(image)

@@ -24,10 +24,12 @@ def get_engine_executable_path():
     return binary_path
 
 
-def run(p_args, windowed=False):  # Assumes the first arg is the binary path.
+def run(p_args, windowed=False, verbose=False): # Assumes the first arg is the binary path.
     args = p_args.copy()
     if not windowed:
         args.insert(1, "--no-window")
+    if verbose:
+        args.insert(1, "--verbose")
     return subprocess.run(args).returncode
 
 
@@ -48,10 +50,11 @@ if __name__ == "__main__":
         sys.exit(255)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--windowed", action="store_true", default=False,
-            help="Run the tool in windowed mode, disabled by default.")
+    parser.add_argument("--windowed", action="store_true", default=False, help="Run in windowed mode.")
+    parser.add_argument("--verbose", action="store_true", default=False, help="Run in verbose mode.")
+    parser.add_argument("--debug", action="store_true", default=False, help="Run in debug mode.")
 
-    subparsers = parser.add_subparsers(dest="tool")
+    subparsers = parser.add_subparsers(dest="tool", required=True)
 
     # Editor.
     editor = subparsers.add_parser("editor", help="Run Godot editor.")
@@ -73,18 +76,36 @@ if __name__ == "__main__":
 
     if args.tool.startswith("editor"):
         print("Running Godot editor ...")
-        ret = run([godot_bin, "--path", "tests/project", "--editor"], windowed=True)
+        ret = run([godot_bin, "--path", "tests/project", "--editor"], windowed=True, verbose=args.verbose)
         sys.exit(ret)
+
     elif args.tool.startswith("test"):
         print("Running Goost tests ...")
-        test_args = [
-            godot_bin,
-            "--path",
-            "tests/project",
-            "-d",
-            "-s",
-            os.path.join(base_path, "tests/project/addons/gut/gut_cmdln.gd"),
-        ]
+
+        import atexit
+        import time
+
+        time_start = time.time()
+
+        def print_time_elapsed():
+            time_elapsed_sec = round(time.time() - time_start, 3)
+            time_ms = round((time_elapsed_sec % 1) * 1000)
+            print(f"[Time elapsed: {time.strftime('%H:%M:%S', time.gmtime(time_elapsed_sec))}.{time_ms:03}]")
+
+        atexit.register(print_time_elapsed)
+
+        test_args = [godot_bin]
+        # Path to GUT test project.
+        test_args.extend(["--path", "tests/project"])
+        # Allows to speed up tests. Do not set below 15, may cause delta time errors.
+        test_args.extend(["--fixed-fps", "15"])
+        # Run in debug mode, disabling it allows to workaround:
+        # https://github.com/godotengine/godot/issues/51387
+        if args.debug:
+            test_args.append("-d") # Use short options, GUT will break otherwise.
+        # Path to GUT command-line script.
+        test_args.extend(["-s", os.path.join(base_path, "tests/project/addons/gut/gut_cmdln.gd")])
+
         if args.test_file:
             # Reset `-gdir`, otherwise all scripts are going to be collected
             # recursively from the directory defined in `.gutconfig.json`.
@@ -96,13 +117,20 @@ if __name__ == "__main__":
             # Not exiting on failure only makes sense while running in
             # windowed mode, this does not matter for console output.
             test_args.append("-gexit=true")
-        ret = run(test_args, windowed=args.windowed)
-        sys.exit(ret)
+
+        try:
+            ret = run(test_args, windowed=args.windowed, verbose=args.verbose)
+            sys.exit(ret)
+        except KeyboardInterrupt:
+            print("Aborting Goost tests.")
+            sys.exit(255)
+
     elif args.tool.startswith("doc"):
         print("Generating documentation ...")
         if not os.path.exists("doc/godot"):
             os.makedirs("doc/godot")
-        ret = run([godot_bin, "--doctool", os.path.join(base_path, "doc/godot")], windowed=args.windowed)
+        ret = run([godot_bin, "--doctool", os.path.join(base_path, "doc/godot")],
+                windowed=args.windowed, verbose=args.verbose)
         sys.exit(ret)
     else:
         print("Error: tool not found. Run with `--help` to list available tools.")

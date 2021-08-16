@@ -24,8 +24,21 @@ components = [
     "core/math/geometry",
     "scene/physics",
     "scene/gui",
-    "editor",
+    "editor/vcs",
 ]
+
+def get_component_readable_name(component):
+    name = {
+        "script": "Scripting",
+        "image": "Image Processing",
+        "geometry": "Geometry",
+        "physics": "Physics",
+        "gui": "User Interface",
+        "vcs": "Version Control"
+    }.get(component, "")
+    if not name:
+        name = component.capitalize()
+    return name
 
 def get_components(config={}, enabled_by_default=True):
     import sys
@@ -133,6 +146,10 @@ class GoostClass:
 #
 # Only rightmost child components are specified.
 classes = {
+    "EditorVCSInterfaceGit": "vcs",  # modules/git
+	"CommandLineHelpFormat": "core",
+    "CommandLineOption": "core",
+	"CommandLineParser": "core",
     "GoostEngine": "core",
     "GoostGeometry2D": "geometry",
     "GoostImage": "image",
@@ -153,11 +170,12 @@ classes = {
     "PolyDecompParameters2D": "geometry",
     "PolyOffset2D": "geometry",
     "PolyOffsetParameters2D": "geometry",
-    "PolyNode2D": "geometry",
     "PolyCircle2D": "scene",
+    "PolyCollisionShape2D": "physics",
+    "PolyNode2D": "geometry",
+    "PolyPath2D": "geometry",
     "PolyRectangle2D": "scene",
     "PolyShape2D": "scene",
-    "PolyCollisionShape2D": "physics",
     "Random": "math",
     "Random2D": "geometry",
     "ShapeCast2D": "physics",
@@ -170,8 +188,9 @@ classes = {
 # This is a list of all classes registered from within `modules/` directory.
 # These cannot be disabled via `custom.py` configuration file.
 module_classes = [
-    "ImageFrames",
+    "EditorVCSInterfaceGit",
     "GDScriptTranspiler",
+    "ImageFrames",
 ]
 
 # Instantiate `GoostClass` nodes.
@@ -187,6 +206,7 @@ classes = _classes
 # compile/link errors or failing unit tests, it's likely a dependency issue.
 # If so, define them here explicitly so that they're automatically enabled.
 class_dependencies = {
+    "CommandLineParser": ["CommandLineOption", "CommandLineHelpFormat"],
     "GoostEngine" : "InvokeState",
     "GoostGeometry2D" : ["PolyBoolean2D", "PolyDecomp2D", "PolyOffset2D"],
     "LightTexture" : "GradientTexture2D",
@@ -194,8 +214,9 @@ class_dependencies = {
     "MixinScript" : "Mixin",
     "PolyBoolean2D" : ["PolyBooleanParameters2D", "PolyNode2D"],
     "PolyDecomp2D" : "PolyDecompParameters2D",
+    "PolyCircle2D" : ["GoostGeometry2D", "PolyNode2D"],
     "PolyOffset2D" : "PolyOffsetParameters2D",
-    "PolyCircle2D" : "PolyNode2D",
+    "PolyPath2D" : ["PolyOffset2D", "PolyOffsetParameters2D"],
     "PolyRectangle2D" : "PolyNode2D",
     "PolyShape2D" : "PolyNode2D",
     "PolyCollisionShape2D" : ["PolyShape2D", "PolyNode2D"],
@@ -519,7 +540,8 @@ if __name__ == "__main__":
                     continue
                 f.write(".. toctree::\n")
                 f.write("    :maxdepth: 1\n")
-                f.write("    :caption: %s\n" % component.capitalize())
+                caption = get_component_readable_name(component)
+                f.write("    :caption: %s\n" % caption)
                 f.write("    :name: toc-component-%s\n" % component)
                 f.write("\n")
                 for class_name in class_list:
@@ -528,9 +550,12 @@ if __name__ == "__main__":
                 parents = get_parent_components(component)
                 parents.reverse()
                 if parents:
-                    f.write("**%s** is part of: " % component.capitalize())
+                    f.write("**%s** is part of: " % caption)
                     for i in range(len(parents)):
-                        f.write(":ref:`toc-component-%s`" % parents[i])
+                        if len(get_component_classes(parents[i])) > 0:
+                            f.write(":ref:`toc-component-%s`" % parents[i])
+                        else:
+                            f.write(parents[i].capitalize())
                         if i < len(parents) - 1:
                             f.write(" **>** ")
                     f.write("\n\n")
@@ -554,10 +579,10 @@ if __name__ == "__main__":
                 f.write("\n")
                 f.write(".. code-block:: shell\n")
                 f.write("\n")
-                f.write("    # Disable %s component.\n" % component)
+                f.write("    # Disable \"%s\" component.\n" % get_component_readable_name(component))
                 f.write("    scons goost_%s_enabled=no\n" % component)
                 f.write("\n")
-                f.write("    # Enable %s component, disable all others.\n" % component)
+                f.write("    # Enable \"%s\" component, disable all others.\n" % get_component_readable_name(component))
                 f.write("    scons goost_components_enabled=no goost_%s_enabled=yes\n" % component)
                 f.write("\n")
 

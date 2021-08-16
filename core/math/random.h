@@ -1,5 +1,4 @@
-#ifndef GOOST_RANDOM_H
-#define GOOST_RANDOM_H
+#pragma once
 
 #include "core/math/random_number_generator.h"
 
@@ -26,4 +25,3 @@ public:
 	}
 };
 
-#endif // GOOST_RANDOM_H

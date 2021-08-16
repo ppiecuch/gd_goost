@@ -1,5 +1,4 @@
-#ifndef GOOST_MULTISCRIPT_H
-#define GOOST_MULTISCRIPT_H
+#pragma once
 
 // Based on unreleased and subsequently removed MixinScript support
 // in previous versions of Godot: https://github.com/godotengine/godot/pull/8718
@@ -89,6 +88,8 @@ public:
 	virtual bool is_tool() const;
 	virtual bool is_valid() const;
 
+	virtual bool inherits_script(const Ref<Script> &p_script) const;
+
 	virtual String get_node_type() const { return ""; }
 
 	void add_mixin(const Ref<Script> &p_script);
@@ -177,4 +178,3 @@ public:
 	int profiling_get_frame_data(ProfilingInfo *p_info_arr, int p_info_max) { return 0; }
 };
 
-#endif // GOOST_MULTISCRIPT_H

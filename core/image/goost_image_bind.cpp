@@ -1,7 +1,9 @@
 #include "goost_image_bind.h"
 #include "goost_image.h"
 
-_GoostImage *_GoostImage::singleton = NULL;
+#include "modules/modules_enabled.gen.h"
+
+_GoostImage *_GoostImage::singleton = nullptr;
 
 void _GoostImage::replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color) {
 	GoostImage::replace_color(p_image, p_color, p_with_color);
@@ -109,7 +111,7 @@ void _GoostImage::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_centroid", "image"), &_GoostImage::get_centroid);
 
 	ClassDB::bind_method(D_METHOD("render_polygon", "polygon", "fill", "foreground_color", "background_color"), &_GoostImage::render_polygon, DEFVAL(false), DEFVAL(Color(1, 1, 1, 1)), DEFVAL(Color(0, 0, 0, 0)));
-#ifdef SVG_ENABLED
+#ifdef MODULE_SVG_ENABLED
 	ClassDB::bind_method(D_METHOD("render_svg", "svg_document", "scale"), &_GoostImage::render_svg, DEFVAL(1.0));
 #endif
 

@@ -16,57 +16,52 @@ Error ResourceSaverIndexedPNG::save(const String &p_path, const RES &p_resource,
 	Ref<ImageTexture> texture = p_resource;
 
 	ERR_FAIL_COND_V_MSG(texture.is_null(), ERR_INVALID_PARAMETER, "Invalid texture passed.");
-	ERR_FAIL_COND_V_MSG(!texture->get_width() || !texture->get_height(), ERR_INVALID_PARAMETER, "Can't save empty texture as PNG.");
+	ERR_FAIL_COND_V_MSG(texture->get_width() == 0, ERR_INVALID_DATA, "Can't save empty texture as PNG.");
+	ERR_FAIL_COND_V_MSG(texture->get_height() == 0, ERR_INVALID_DATA, "Can't save empty texture as PNG.");
 
 	Ref<ImageIndexed> img = texture->get_data();
-
 	Error err = save_image(p_path, img);
-
-	if (err == OK) {
-	}
 
 	return err;
 };
 
 Error ResourceSaverIndexedPNG::save_image(const String &p_path, const Ref<ImageIndexed> &p_img) {
+	ERR_FAIL_COND_V(p_img.is_null(), ERR_INVALID_PARAMETER);
+	ERR_FAIL_COND_V(p_img->get_width() == 0, ERR_INVALID_DATA);
+	ERR_FAIL_COND_V(p_img->get_height() == 0, ERR_INVALID_DATA);
+
 	Ref<Image> img = p_img->duplicate();
 
-	if (img->is_compressed())
+	if (img->is_compressed()) {
 		img->decompress();
+	}
+	ERR_FAIL_COND_V_MSG(img->is_compressed(), ERR_UNAVAILABLE, "Cannot save indexed PNG from compressed image.");
 
-	ERR_FAIL_COND_V(img->is_compressed(), ERR_INVALID_PARAMETER);
-
-	bool has_palette = p_img->has_palette();
-	bool has_alpha = p_img->detect_alpha() > Image::ALPHA_NONE;
+	const bool has_palette = p_img->has_palette();
+	const bool has_alpha = p_img->detect_alpha() > Image::ALPHA_NONE;
 	const int format = p_img->get_format();
 
-	png_structp png_ptr;
-	png_infop info_ptr;
-	png_bytep *row_pointers;
-
-	/* initialize stuff */
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
+	// Initialize.
+	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	ERR_FAIL_COND_V(!png_ptr, ERR_CANT_CREATE);
 
-	info_ptr = png_create_info_struct(png_ptr);
-
+	png_infop info_ptr = png_create_info_struct(png_ptr);
 	ERR_FAIL_COND_V(!info_ptr, ERR_CANT_CREATE);
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		ERR_FAIL_V(ERR_CANT_OPEN);
 	}
-	//change this
 	Error err;
 	FileAccess *f = FileAccess::open(p_path, FileAccess::WRITE, &err);
-	if (err) {
-		ERR_FAIL_V(err);
+	if (err != OK) {
+		ERR_FAIL_V_MSG(err, "Cannot open file.");
 	}
+	png_set_write_fn(png_ptr, f, _write_png_data, nullptr);
 
-	png_set_write_fn(png_ptr, f, _write_png_data, NULL);
-
-	/* write header */
+	// Write header.
 	if (setjmp(png_jmpbuf(png_ptr))) {
+		f->close();
+		memdelete(f);
 		ERR_FAIL_V(ERR_CANT_OPEN);
 	}
 
@@ -107,8 +102,8 @@ Error ResourceSaverIndexedPNG::save_image(const String &p_path, const Ref<ImageI
 			}
 		}
 	}
-	int w = img->get_width();
-	int h = img->get_height();
+	const int w = img->get_width();
+	const int h = img->get_height();
 
 	const int bit_depth = 8; // 1-2-4-8 bit depths for PNG_COLOR_TYPE_PALETTE
 
@@ -116,8 +111,8 @@ Error ResourceSaverIndexedPNG::save_image(const String &p_path, const Ref<ImageI
 			PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
 	// Prepare palette
-	png_colorp png_palette = NULL;
-	png_bytep png_palette_alpha = NULL;
+	png_colorp png_palette = nullptr;
+	png_bytep png_palette_alpha = nullptr;
 
 	if (has_palette) {
 		PoolVector<uint8_t>::Read r = p_img->get_palette_data().read();
@@ -132,14 +127,14 @@ Error ResourceSaverIndexedPNG::save_image(const String &p_path, const Ref<ImageI
 				ps = 4;
 				break;
 			default: {
-				ERR_FAIL_V_MSG(ERR_UNAVAILABLE, "Cannot save indexed PNG image, unsupported format");
+				ERR_FAIL_V_MSG(ERR_UNAVAILABLE, "Cannot save indexed PNG image, unsupported format.");
 			}
 		}
-		// RGB
+		// RGB channels.
 		int palette_size = p_img->get_palette_size();
 		png_palette = (png_color *)png_malloc(png_ptr, palette_size * sizeof(png_color));
 
-		for (int i = 0; i < palette_size; i++) {
+		for (int i = 0; i < palette_size; ++i) {
 			png_color *c = &png_palette[i];
 
 			c->red = r[i * ps + 0];
@@ -148,55 +143,54 @@ Error ResourceSaverIndexedPNG::save_image(const String &p_path, const Ref<ImageI
 		}
 		png_set_PLTE(png_ptr, info_ptr, png_palette, palette_size);
 
-		// Alpha
+		// Alpha channel.
 		if (has_alpha) {
 			ERR_FAIL_COND_V(format != Image::FORMAT_RGBA8, ERR_BUG);
 
 			png_palette_alpha = (png_byte *)png_malloc(png_ptr, palette_size * sizeof(png_byte));
-			for (int i = 0; i < palette_size; i++) {
+			for (int i = 0; i < palette_size; ++i) {
 				png_bytep a = &png_palette_alpha[i];
 				*a = r[i * ps + 3];
 			}
-			png_set_tRNS(png_ptr, info_ptr, png_palette_alpha, palette_size, NULL);
+			png_set_tRNS(png_ptr, info_ptr, png_palette_alpha, palette_size, nullptr);
 		}
 	}
 	png_write_info(png_ptr, info_ptr);
 
-	/* write bytes */
+	// Write data.
 	if (setjmp(png_jmpbuf(png_ptr))) {
+		f->close();
 		memdelete(f);
 		ERR_FAIL_V(ERR_CANT_OPEN);
 	}
 
 	PoolVector<uint8_t>::Read r;
-
 	if (has_palette) {
 		r = p_img->get_index_data().read();
 	} else {
 		r = img->get_data().read();
 	}
-
-	row_pointers = (png_bytep *)memalloc(sizeof(png_bytep) * h);
-	for (int i = 0; i < h; i++) {
+	png_bytep *row_pointers = (png_bytep *)memalloc(sizeof(png_bytep) * h);
+	for (int i = 0; i < h; ++i) {
 		row_pointers[i] = (png_bytep)&r[i * w * cs];
 	}
 	png_write_image(png_ptr, row_pointers);
-
 	memfree(row_pointers);
 
-	/* end write */
 	if (setjmp(png_jmpbuf(png_ptr))) {
+		f->close();
 		memdelete(f);
 		ERR_FAIL_V(ERR_CANT_OPEN);
 	}
+	png_write_end(png_ptr, nullptr);
 
-	png_write_end(png_ptr, NULL);
-	memdelete(f);
-
-	/* cleanup heap allocation */
-	png_destroy_write_struct(&png_ptr, &info_ptr);
+	// Cleanup.
 	png_free(png_ptr, png_palette);
 	png_free(png_ptr, png_palette_alpha);
+	png_destroy_write_struct(&png_ptr, &info_ptr);
+
+	f->close();
+	memdelete(f);
 
 	return OK;
 }
