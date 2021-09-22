@@ -468,7 +468,7 @@ Color GoostImage::get_pixel_average(const Ref<Image> &p_image, const Rect2 &p_re
 }
 
 Ref<Image> GoostImage::render_polygon(Vector<Point2> p_polygon, bool p_fill, const Color &p_color, const Color &p_bg_color) {
-	ERR_FAIL_COND_V_MSG(p_polygon.size() < 3, Variant(), "Bad polygon!")
+	ERR_FAIL_COND_V_MSG(p_polygon.size() < 3, Variant(), "Bad polygon!");
 
 	PTA *pta_in = ptaCreate(p_polygon.size());
 	for (int i = 0; i < p_polygon.size(); ++i) {
