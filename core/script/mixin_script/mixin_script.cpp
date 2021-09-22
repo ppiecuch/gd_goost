@@ -283,6 +283,8 @@ void MixinScript::add_mixin(const Ref<Script> &p_script) {
 	_THREAD_SAFE_METHOD_
 
 	ERR_FAIL_COND(p_script.is_null());
+	ERR_FAIL_COND_MSG(p_script.ptr() == this, "Cannot add MixinScript to itself.");
+
 	Mixin *script_owner = memnew(Mixin);
 	mixin_instances.push_back(script_owner);
 	mixins.push_back(p_script);
@@ -509,6 +511,7 @@ void MixinScriptLanguage::get_recognized_extensions(List<String> *p_extensions) 
 }
 
 MixinScriptLanguage::MixinScriptLanguage() {
+	ERR_FAIL_COND_MSG(singleton != nullptr, "Singleton already exists");
 	singleton = this;
 }
 

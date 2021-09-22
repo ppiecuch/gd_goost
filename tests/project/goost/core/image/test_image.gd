@@ -14,7 +14,8 @@ var output
 
 
 func after_each():
-	output.save_png("res://out/%s.png" % [gut._current_test.name])
+	if output:
+		output.save_png("res://out/%s.png" % [gut._current_test.name])
 
 
 func test_replace_color():
@@ -145,6 +146,14 @@ func test_render_polygon_filled():
 	var pixel = output.get_pixelv(output.get_size() / 2)
 	assert_eq(pixel, Color.white, "Center of the image should be white.")
 	output.unlock()
+
+
+func test_render_polygon_invalid():
+	# Input from the fuzzer...
+	Engine.print_error_messages = false
+	output = GoostImage.render_polygon([Vector2(0.695821, 0.718215), Vector2(-30.700972, -42.334), Vector2(0.959952, -0.280165), Vector2(-11.923018, 20.621294), Vector2(-0.594874, 0.803819), Vector2(0.801119, -0.598505), Vector2(-0.129389, 0.991594), Vector2(-8.80065, -27.064463), Vector2(-0.987193, -0.159532), Vector2(-0.778665, 0.62744), Vector2(0.764317, 0.644841), Vector2(2.220136, 26.017015), Vector2(0.986621, -0.163031), Vector2(-0.935623, 0.353002), Vector2(0.904148, 0.427219)], true)
+	Engine.print_error_messages = true
+	assert_null(output)
 
 
 func test_render_polygon_filled_color():
@@ -492,8 +501,11 @@ class TestInvalidData extends "res://addons/gut/test.gd":
 		GoostImage.dilate(image, 9000)
 		GoostImage.erode(image, 9000)
 		GoostImage.morph(image, -1, Vector2(9000, -9000))
-		var _centroid = GoostImage.get_centroid(image)
-		var _average = GoostImage.get_pixel_average(image)
+		var _centroid = GoostImage.get_centroid(Image.new())
+		var average = GoostImage.get_pixel_average(image)
+		assert_eq(average, Color())
+		average = GoostImage.get_pixel_average(Image.new(), Rect2(Vector2(-0.371352, -0.928492), Vector2(-0.643768, -0.76522)), null)
+		assert_eq(average, Color())
 		var _has = GoostImage.get_pixel_or_null(image, -1, -1)
 		_has = GoostImage.get_pixelv_or_null(image, Vector2(-1, 1))
 

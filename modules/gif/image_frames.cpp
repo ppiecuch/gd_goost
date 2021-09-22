@@ -46,14 +46,17 @@ static int save_gif_func(GifFileType *gif, const GifByteType *data, int length) 
 }
 
 Error ImageFrames::save_gif(const String &p_filepath, int p_color_count) {
-	ERR_FAIL_COND_V_MSG(get_frame_count() == 0, ERR_CANT_CREATE,
-			"ImageFrames must have at least one frame added.");
+	ERR_FAIL_COND_V_MSG(get_frame_count() == 0, ERR_CANT_CREATE, "ImageFrames must have at least one frame added.");
 
-	int error;
+	// GIF allows to add images of different sizes,
+	// but we need to determine the canvas size that could contain all frames.
+	const Rect2 &rect = get_bounding_rect();
+	ERR_FAIL_COND_V_MSG(rect.has_no_area(), ERR_CANT_CREATE, "ImageFrames contain uninitialized images.");
 
 	FileAccess *f = FileAccess::open(p_filepath, FileAccess::WRITE);
 	ERR_FAIL_COND_V_MSG(!f, ERR_CANT_OPEN, "Error opening file.");
 
+	int error;
 	GifFileType *gif = EGifOpen(f, save_gif_func, &error);
 	if (!gif) {
 		memdelete(f);
@@ -61,12 +64,8 @@ Error ImageFrames::save_gif(const String &p_filepath, int p_color_count) {
 		return ERR_CANT_CREATE;
 	}
 
-	// Using dimensions of the first image as the base.
-	const Ref<Image> &first = get_frame_image(0);
-	ERR_FAIL_COND_V(first.is_null(), ERR_CANT_CREATE);
-
-	gif->SWidth = first->get_width();
-	gif->SHeight = first->get_height();
+	gif->SWidth = rect.size.x;
+	gif->SHeight = rect.size.y;
 	gif->SColorResolution = 8;
 	gif->SBackGroundColor = 0;
 	gif->SColorMap = nullptr; // No global color map, using local.
@@ -78,6 +77,15 @@ Error ImageFrames::save_gif(const String &p_filepath, int p_color_count) {
 				gif->SBackGroundColor,
 				gif->SColorMap) == GIF_ERROR) {
 		return ERR_CANT_CREATE;
+	}
+
+	// If any image has alpha, then we'll use GIF transparency flag.
+	bool has_alpha = false;
+	for (int i = 0; i < get_frame_count(); ++i) {
+		has_alpha = get_frame_image(i)->detect_alpha();
+		if (has_alpha) {
+			break;
+		}
 	}
 
 	for (int i = 0; i < get_frame_count(); ++i) {
@@ -92,7 +100,7 @@ Error ImageFrames::save_gif(const String &p_filepath, int p_color_count) {
 			indexed->convert(Image::FORMAT_RGBA8);
 			int num_colors = CLAMP(p_color_count, 1, 256);
 			num_colors = next_power_of_2(num_colors);
-			indexed->generate_palette(num_colors, ImageIndexed::DITHER_ORDERED, false, true);
+			indexed->generate_palette(num_colors, ImageIndexed::DITHER_ORDERED, has_alpha, true);
 		} else {
 			ERR_FAIL_COND_V_MSG(!indexed->has_palette(), ERR_CANT_CREATE,
 					"Custom ImageIndexed passed to ImagesFrames must have palette already generated.");
@@ -118,18 +126,24 @@ Error ImageFrames::save_gif(const String &p_filepath, int p_color_count) {
 		}
 
 		// Add delay.
-		if (get_frame_count() > 1) {
-			EGifPutExtensionLeader(gif, GRAPHICS_EXT_FUNC_CODE);
-			uint16_t d = 100 * delay;
-			uint8_t gfx_ext_data[4] = {
-				0x04,
-				static_cast<uint8_t>((d >> 0) & 0xff),
-				static_cast<uint8_t>((d >> 8) & 0xff),
-				0x00, // Transparency.
-			};
-			EGifPutExtensionBlock(gif, 4, gfx_ext_data);
-			EGifPutExtensionTrailer(gif);
+		EGifPutExtensionLeader(gif, GRAPHICS_EXT_FUNC_CODE);
+		uint16_t d = 100 * delay;
+		// 000: reserved; 010: disposal; 0: no user input; 1: handle transparency.
+		uint8_t packed_fields = 0x08;
+		if (has_alpha) {
+			packed_fields |= 1;
 		}
+		uint8_t gfx_ext_data[4] = {
+			packed_fields,
+			// Delay in hundreds of a second.
+			static_cast<uint8_t>((d >> 0) & 0xff),
+			static_cast<uint8_t>((d >> 8) & 0xff),
+			// Transparent color index, only used when transparent flag is enabled.
+			// (can we always assume 0x00 to represent black color?)
+			0x00,
+		};
+		EGifPutExtensionBlock(gif, 4, gfx_ext_data);
+		EGifPutExtensionTrailer(gif);
 
 		// Write!
 		if (EGifPutImageDesc(gif, 0, 0, frame->get_width(), frame->get_height(), false, gif_color_map) == GIF_ERROR) {
@@ -205,6 +219,14 @@ float ImageFrames::get_frame_delay(int p_idx) const {
 	return frames[p_idx].delay;
 }
 
+Rect2 ImageFrames::get_bounding_rect() const {
+	Rect2 rect;
+	for (int i = 0; i < frames.size(); ++i) {
+		rect.expand_to(frames[i].image->get_size());
+	}
+	return rect;
+}
+
 int ImageFrames::get_frame_count() const {
 	return frames.size();
 }
@@ -228,6 +250,7 @@ void ImageFrames::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_frame_delay", "index", "delay"), &ImageFrames::set_frame_delay);
 	ClassDB::bind_method(D_METHOD("get_frame_delay", "index"), &ImageFrames::get_frame_delay);
 
+	ClassDB::bind_method(D_METHOD("get_bounding_rect"), &ImageFrames::get_bounding_rect);
 	ClassDB::bind_method(D_METHOD("get_frame_count"), &ImageFrames::get_frame_count);
 
 	ClassDB::bind_method(D_METHOD("clear"), &ImageFrames::clear);
