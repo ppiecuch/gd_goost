@@ -12,29 +12,6 @@ Color get_color()  {
 
 bool get_condition() { return randf() >= 0.5; }
 
-Variant Random::range(const Variant &p_from, const Variant &p_to) {
-	ERR_FAIL_COND_V_MSG(p_from.get_type() != p_to.get_type(), Variant(), "Incompatible types.");
-
-	switch (p_from.get_type()) {
-		case Variant::INT: {
-			int from = p_from;
-			int to = p_to;
-			return randi_range(from, to);
-		} break;
-		case Variant::REAL: {
-			real_t from = p_from;
-			real_t to = p_to;
-			return randf_range(from, to);
-		} break;
-		default: {
-			Variant ret;
-			Variant::interpolate(p_from, p_to, randf(), ret);
-			return ret;
-		}
-	}
-	return Variant();
-}
-
 Color color_hsv(float h_min = 0.0, float h_max = 1.0, float s_min = 0.0, float s_max = 1.0, float v_min = 0.0, float v_max = 1.0, float a_min = 1.0, float a_max = 1.0) {
 	Color color;
 	color.set_hsv(
@@ -76,10 +53,10 @@ Variant range(const Variant &p_from, const Variant &p_to) {
 	return Variant();
 }
 
-Variant choice(const Variant &p_sequence) {
-	switch (p_sequence.get_type()) {
+Variant choice(const Variant &p_from) {
+	switch (p_from.get_type()) {
 		case Variant::STRING: {
-			String str = p_sequence;
+			String str = p_from;
 			ERR_FAIL_COND_V_MSG(str.empty(), Variant(), "String is empty.");
 			return str.substr(randi() % str.length(), 1); // Not size().
 		} break;
@@ -91,7 +68,7 @@ Variant choice(const Variant &p_sequence) {
 		case Variant::POOL_VECTOR3_ARRAY:
 		case Variant::POOL_COLOR_ARRAY:
 		case Variant::ARRAY: {
-			Array arr = p_sequence;
+			Array arr = p_from;
 			ERR_FAIL_COND_V_MSG(arr.empty(), Variant(), "Array is empty.");
 			return arr[randi() % arr.size()];
 		} break;
