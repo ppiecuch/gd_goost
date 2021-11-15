@@ -12,7 +12,7 @@ env_goost = env.Clone()
 # Make include paths independent of Goost location.
 # This is needed for modules copied directly under `modules/` directory,
 # but not if someone uses `custom_modules` option.
-env_goost.Prepend(CPPPATH=[s.path.realpath(os.curdir), os.path.dirname(os.path.realpath(os.curdir))])
+env_goost.Prepend(CPPPATH=[os.path.realpath(os.curdir), os.path.dirname(os.path.realpath(os.curdir))])
 
 # Define components to build.
 for name in env["goost_components_enabled"]:
