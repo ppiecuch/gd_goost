@@ -3,7 +3,7 @@ name = "Goost: Godot Engine Extension"
 short_name = "goost"
 version = {
     "major": 1,
-    "minor": 1,
+    "minor": 2,
     "patch": 0,
     "branch": "gd3",
     "status": "beta",
@@ -170,6 +170,7 @@ classes = {
     "PolyDecompParameters2D": "geometry",
     "PolyOffset2D": "geometry",
     "PolyOffsetParameters2D": "geometry",
+    "PolyCapsule2D": "scene",
     "PolyCircle2D": "scene",
     "PolyCollisionShape2D": "physics",
     "PolyNode2D": "geometry",
@@ -214,6 +215,7 @@ class_dependencies = {
     "MixinScript" : "Mixin",
     "PolyBoolean2D" : ["PolyBooleanParameters2D", "PolyNode2D"],
     "PolyDecomp2D" : "PolyDecompParameters2D",
+    "PolyCapsule2D" : ["GoostGeometry2D", "PolyNode2D"],
     "PolyCircle2D" : ["GoostGeometry2D", "PolyNode2D"],
     "PolyOffset2D" : "PolyOffsetParameters2D",
     "PolyPath2D" : ["PolyOffset2D", "PolyOffsetParameters2D"],
@@ -509,7 +511,7 @@ if __name__ == "__main__":
             sys.exit(255)
 
         subprocess.run([sys.executable,
-            "godot/doc/tools/makerst.py",
+            "godot/doc/tools/make_rst.py",
             "godot/doc/classes",
             "godot/modules",
             "doc",

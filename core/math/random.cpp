@@ -18,7 +18,7 @@ void Random::_bind_methods() {
 			&Random::color_rgb, DEFVAL(0.0), DEFVAL(1.0), DEFVAL(0.0), DEFVAL(1.0), DEFVAL(0.0), DEFVAL(1.0), DEFVAL(1.0), DEFVAL(1.0));
 
 	ClassDB::bind_method(D_METHOD("range", "from", "to"), &Random::range);
-	ClassDB::bind_method(D_METHOD("choice", "from_sequence"), &Random::choice);
+	ClassDB::bind_method(D_METHOD("choice", "from"), &Random::choice);
 	ClassDB::bind_method(D_METHOD("shuffle", "array"), &Random::shuffle);
 	ClassDB::bind_method(D_METHOD("decision", "probability"), &Random::decision);
 

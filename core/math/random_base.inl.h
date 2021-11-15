@@ -12,6 +12,29 @@ Color get_color()  {
 
 bool get_condition() { return randf() >= 0.5; }
 
+Variant Random::range(const Variant &p_from, const Variant &p_to) {
+	ERR_FAIL_COND_V_MSG(p_from.get_type() != p_to.get_type(), Variant(), "Incompatible types.");
+
+	switch (p_from.get_type()) {
+		case Variant::INT: {
+			int from = p_from;
+			int to = p_to;
+			return randi_range(from, to);
+		} break;
+		case Variant::REAL: {
+			real_t from = p_from;
+			real_t to = p_to;
+			return randf_range(from, to);
+		} break;
+		default: {
+			Variant ret;
+			Variant::interpolate(p_from, p_to, randf(), ret);
+			return ret;
+		}
+	}
+	return Variant();
+}
+
 Color color_hsv(float h_min = 0.0, float h_max = 1.0, float s_min = 0.0, float s_max = 1.0, float v_min = 0.0, float v_max = 1.0, float a_min = 1.0, float a_max = 1.0) {
 	Color color;
 	color.set_hsv(
@@ -72,8 +95,13 @@ Variant choice(const Variant &p_sequence) {
 			ERR_FAIL_COND_V_MSG(arr.empty(), Variant(), "Array is empty.");
 			return arr[randi() % arr.size()];
 		} break;
+		case Variant::DICTIONARY: {
+			Dictionary dict = p_from;
+			ERR_FAIL_COND_V_MSG(dict.empty(), Variant(), "Dictionary is empty.");
+			return dict.get_value_at_index(randi() % dict.size());
+		} break;
 		default: {
-			ERR_FAIL_V_MSG(Variant(), "Unsupported type: the sequence must be indexable.");
+			ERR_FAIL_V_MSG(Variant(), "Unsupported: the type must be indexable.");
 		}
 	}
 	return Variant();

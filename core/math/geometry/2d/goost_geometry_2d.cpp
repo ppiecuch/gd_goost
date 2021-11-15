@@ -449,15 +449,24 @@ int GoostGeometry2D::point_in_polygon(const Point2 &p_point, const Vector<Point2
 	return pip_result;
 }
 
+Vector<Point2> GoostGeometry2D::rectangle(const Point2 &p_extents) {
+	Vector<Point2> vertices;
+	vertices.push_back(Point2(-p_extents.x, -p_extents.y));
+	vertices.push_back(Point2(+p_extents.x, -p_extents.y));
+	vertices.push_back(Point2(+p_extents.x, +p_extents.y));
+	vertices.push_back(Point2(-p_extents.x, +p_extents.y));
+	return vertices;
+}
+
 Vector<Point2> GoostGeometry2D::regular_polygon(int p_edge_count, real_t p_size) {
 	ERR_FAIL_COND_V(p_edge_count < 3, Vector<Point2>());
 
 	Vector<Point2> polygon;
 
-	// Always generate polygons in counter-clockwise order by default.
-	for (int i = p_edge_count - 1; i >= 0; --i) {
+	for (int i = 0; i < p_edge_count; ++i) {
 		const real_t phi = (Math_TAU / p_edge_count) * i;
-		polygon.push_back(Vector2(Math::sin(phi), Math::cos(phi)) * p_size);
+		const Vector2 v = Vector2(Math::cos(phi), Math::sin(phi)) * p_size;
+		polygon.push_back(v);
 	}
 	return polygon;
 }
@@ -466,12 +475,37 @@ Vector<Point2> GoostGeometry2D::circle(real_t p_radius, real_t p_max_error) {
 	ERR_FAIL_COND_V(p_radius < 0.0, Vector<Point2>());
 	ERR_FAIL_COND_V(p_max_error < 0.0, Vector<Point2>());
 
-	static const int max_points = 4096;
+	const int vertex_count = static_cast<int>(Math::ceil(Math_PI / Math::acos(1.0 - p_max_error / p_radius)));
+	const int edge_count = MAX(vertex_count, 3);
 
-	int vertex_count = static_cast<int>(Math::ceil(Math_PI / Math::acos(1.0 - p_max_error / p_radius)));
-	vertex_count = CLAMP(vertex_count, 3, max_points);
+	return regular_polygon(edge_count, p_radius);
+}
 
-	return regular_polygon(vertex_count, p_radius); // vertex count == edge count
+Vector<Point2> GoostGeometry2D::capsule(real_t p_radius, real_t p_height, real_t p_max_error) {
+	ERR_FAIL_COND_V(p_radius < 0.0, Vector<Point2>());
+	ERR_FAIL_COND_V(p_height < 0.0, Vector<Point2>());
+	ERR_FAIL_COND_V(p_max_error < 0.0, Vector<Point2>());
+
+	if (p_height <= 0.0) {
+		return circle(p_radius, p_max_error);
+	}
+	int vertex_count = static_cast<int>(Math::ceil((Math_PI * 0.5) / acos(1.0 - p_max_error / p_radius)));
+	vertex_count = MAX(vertex_count, 2);
+
+	Vector<Point2> vertices;
+	for (int i = 0; i < vertex_count + 1; ++i) {
+		real_t phi = (Math_PI / vertex_count) * i;
+		Vector2 v = Vector2(Math::cos(phi), Math::sin(phi)) * p_radius;
+		v.y += p_height * 0.5;
+		vertices.push_back(v);
+	}
+	for (int i = 0; i < vertex_count + 1; ++i) {
+		real_t phi = (Math_PI / vertex_count) * i;
+		Vector2 v = Vector2(-Math::cos(phi), Math::sin(-phi)) * p_radius;
+		v.y -= p_height * 0.5;
+		vertices.push_back(v);
+	}
+	return vertices;
 }
 
 // Implementation borrowed from `TileMap` editor plugin:
@@ -520,7 +554,8 @@ Vector<Point2i> GoostGeometry2D::pixel_line(const Point2i &p_start, const Point2
 Vector<Point2i> GoostGeometry2D::pixel_circle(int p_radius, const Point2i &p_origin) {
 	ERR_FAIL_COND_V(p_radius < 0, Vector<Point2i>());
 
-	Vector<Point2i> circle;
+	Vector<Point2i> vertices;
+
 	const int cx = p_origin.x;
 	const int cy = p_origin.y;
 
@@ -533,14 +568,14 @@ Vector<Point2i> GoostGeometry2D::pixel_circle(int p_radius, const Point2i &p_ori
 
 	while (x >= y) {
 		// This takes advantage of the fact that the circle is symmetrical.
-		circle.push_back(Point2i(cx + x, cy + y));
-		circle.push_back(Point2i(cx - x, cy + y));
-		circle.push_back(Point2i(cx - x, cy - y));
-		circle.push_back(Point2i(cx + x, cy - y));
-		circle.push_back(Point2i(cx + y, cy + x));
-		circle.push_back(Point2i(cx - y, cy + x));
-		circle.push_back(Point2i(cx - y, cy - x));
-		circle.push_back(Point2i(cx + y, cy - x));
+		vertices.push_back(Point2i(cx + x, cy + y));
+		vertices.push_back(Point2i(cx - x, cy + y));
+		vertices.push_back(Point2i(cx - x, cy - y));
+		vertices.push_back(Point2i(cx + x, cy - y));
+		vertices.push_back(Point2i(cx + y, cy + x));
+		vertices.push_back(Point2i(cx - y, cy + x));
+		vertices.push_back(Point2i(cx - y, cy - x));
+		vertices.push_back(Point2i(cx + y, cy - x));
 
 		y += 1;
 		rerr += dy;
@@ -551,7 +586,7 @@ Vector<Point2i> GoostGeometry2D::pixel_circle(int p_radius, const Point2i &p_ori
 			dx += 2;
 		}
 	}
-	return circle;
+	return vertices;
 }
 
 Vector<Point2i> GoostGeometry2D::polyline_to_pixels(const Vector<Point2> &p_points) {
