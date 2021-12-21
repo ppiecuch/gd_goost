@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [1.2] - 2021-12-19
+
+### Added
+
+- A `MidiPlayer` to play MIDI files with SoundFont.
+- A `Debug2D` singleton to help the process of debugging in 2D by drawing. 
+- A `Spawner2D` node to automatically instantiate nodes from scenes and scripts in 2D.
+- A `GoostMath` singleton.
+- A `PolyEllipse2D` node, which generates ellipse polygon, and corresponding `GoostGeometry2D.ellipse()` method.
+- A project setting for configuring path to repository by Git plugin: `version_control/git/repository_path`.
+- An editor setting for `MixinScript` auto-switching behavior: `text_editor/files/open_first_script_on_editing_mixin_script` (disabled by default now).
+
 ## [1.1] - 2021-11-07
 
 ### Added
@@ -43,5 +55,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 Initial release.
 
+[1.2]: https://github.com/goostengine/goost/compare/1.1-stable+3.4...1.2-stable+3.4.1
 [1.1]: https://github.com/goostengine/goost/compare/1.0-stable+3.3.2...1.1-stable+3.4
 [1.0]: https://github.com/goostengine/goost/compare/1.0-beta-gd3...1.0-stable+3.3.2

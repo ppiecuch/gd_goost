@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="GoostGeometry2D" inherits="Object" version="3.4">
+<class name="GoostGeometry2D" inherits="Object" version="3.5">
 	<brief_description>
 		[Geometry] singleton extension.
 	</brief_description>
@@ -74,6 +74,16 @@
 			<argument index="1" name="delta" type="float" />
 			<description>
 				Grows a single non-closed path into a polygon by [code]delta[/code] pixels. See also [method PolyOffset2D.deflate_polylines].
+			</description>
+		</method>
+		<method name="ellipse" qualifiers="const">
+			<return type="PoolVector2Array" />
+			<argument index="0" name="width" type="float" />
+			<argument index="1" name="height" type="float" />
+			<argument index="2" name="max_error" type="float" default="0.25" />
+			<description>
+				Generates a closed path approximating the shape of an ellipse with specified width and height.
+				The [code]max_error[/code] parameter allows to increase accuracy of generated shape, with low values increasing the number of vertices, which is similar to [method circle].
 			</description>
 		</method>
 		<method name="exclude_polygons" qualifiers="const">

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # General informational properties of the project, including version.
 name = "Goost: Godot Engine Extension"
 short_name = "goost"
@@ -6,7 +8,7 @@ version = {
     "minor": 2,
     "patch": 0,
     "branch": "gd3",
-    "status": "beta",
+    "status": "stable",
     "year": 2021,
 }
 url = "https://github.com/goostengine/goost"
@@ -21,7 +23,9 @@ website = "https://goostengine.github.io/"
 components = [
     "core/script",
     "core/image",
+    "core/math",
     "core/math/geometry",
+    "scene/audio",
     "scene/physics",
     "scene/gui",
     "editor/vcs",
@@ -29,8 +33,10 @@ components = [
 
 def get_component_readable_name(component):
     name = {
+        "audio": "Audio",
         "script": "Scripting",
         "image": "Image Processing",
+        "math": "Mathematics",
         "geometry": "Geometry",
         "physics": "Physics",
         "gui": "User Interface",
@@ -150,7 +156,10 @@ classes = {
 	"CommandLineHelpFormat": "core",
     "CommandLineOption": "core",
 	"CommandLineParser": "core",
+    "Debug2D": "scene",
+    "DebugCapture": "scene",
     "GoostEngine": "core",
+    "GoostMath": "math",
     "GoostGeometry2D": "geometry",
     "GoostImage": "image",
     "GradientTexture2D": "scene",
@@ -162,6 +171,8 @@ classes = {
     "LightTexture": "scene",
     "LinkedList": "core",
     "ListNode": "core",
+    "MidiFile": "audio",
+    "MidiPlayer": "audio",
     "MixinScript": "script",
     "Mixin": "script",
     "PolyBoolean2D": "geometry",
@@ -172,6 +183,7 @@ classes = {
     "PolyOffsetParameters2D": "geometry",
     "PolyCapsule2D": "scene",
     "PolyCircle2D": "scene",
+    "PolyEllipse2D": "scene",
     "PolyCollisionShape2D": "physics",
     "PolyNode2D": "geometry",
     "PolyPath2D": "geometry",
@@ -180,6 +192,7 @@ classes = {
     "Random": "math",
     "Random2D": "geometry",
     "ShapeCast2D": "physics",
+    "Spawner2D": "scene",
     "Stopwatch": "scene",
     "VariantMap": "core",
     "VariantResource": "core",
@@ -208,6 +221,7 @@ classes = _classes
 # If so, define them here explicitly so that they're automatically enabled.
 class_dependencies = {
     "CommandLineParser": ["CommandLineOption", "CommandLineHelpFormat"],
+    "Debug2D": ["DebugCapture", "GoostGeometry2D", "GridRect"],
     "GoostEngine" : "InvokeState",
     "GoostGeometry2D" : ["PolyBoolean2D", "PolyDecomp2D", "PolyOffset2D"],
     "LightTexture" : "GradientTexture2D",
@@ -217,6 +231,7 @@ class_dependencies = {
     "PolyDecomp2D" : "PolyDecompParameters2D",
     "PolyCapsule2D" : ["GoostGeometry2D", "PolyNode2D"],
     "PolyCircle2D" : ["GoostGeometry2D", "PolyNode2D"],
+    "PolyEllipse2D" : ["GoostGeometry2D", "PolyNode2D"],
     "PolyOffset2D" : "PolyOffsetParameters2D",
     "PolyPath2D" : ["PolyOffset2D", "PolyOffsetParameters2D"],
     "PolyRectangle2D" : "PolyNode2D",
