@@ -5,11 +5,11 @@ name = "Goost: Godot Engine Extension"
 short_name = "goost"
 version = {
     "major": 1,
-    "minor": 2,
+    "minor": 3,
     "patch": 0,
     "branch": "gd3",
-    "status": "stable",
-    "year": 2021,
+    "status": "beta",
+    "year": 2022,
 }
 url = "https://github.com/goostengine/goost"
 doc_url = "https://goost.readthedocs.io/en/%s/" % version["branch"]
@@ -162,7 +162,6 @@ classes = {
     "GoostMath": "math",
     "GoostGeometry2D": "geometry",
     "GoostImage": "image",
-    "GradientTexture2D": "scene",
     "GridRect": "gui",
     "ImageBlender": "image",
     "ImageFrames": "image",  # modules/gif
@@ -224,7 +223,6 @@ class_dependencies = {
     "Debug2D": ["DebugCapture", "GoostGeometry2D", "GridRect"],
     "GoostEngine" : "InvokeState",
     "GoostGeometry2D" : ["PolyBoolean2D", "PolyDecomp2D", "PolyOffset2D"],
-    "LightTexture" : "GradientTexture2D",
     "LinkedList" : "ListNode",
     "MixinScript" : "Mixin",
     "PolyBoolean2D" : ["PolyBooleanParameters2D", "PolyNode2D"],
