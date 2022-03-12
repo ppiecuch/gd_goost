@@ -3,6 +3,8 @@
 #include "core/engine.h"
 #include "scene/main/scene_tree.h"
 
+#include "string_names.h"
+
 #include "image/register_image_types.h"
 #include "math/register_math_types.h"
 #include "script/register_script_types.h"
@@ -10,7 +12,7 @@
 #ifdef TOOLS_ENABLED
 #include "editor/editor_node.h"
 #include "editor/editor_resource_preview.h"
-#include "types/editor/variant_resource_preview.h"
+#include "types/editor/data_container_preview.h"
 #endif
 
 #include "classes_enabled.gen.h"
@@ -19,11 +21,13 @@ namespace goost {
 
 static GoostEngine *_goost = nullptr;
 
-#if defined(TOOLS_ENABLED) && defined(GOOST_VariantResource)
-static void _variant_resource_preview_init();
+#if defined(TOOLS_ENABLED) && defined(GOOST_DataContainer)
+static void _data_container_preview_init();
 #endif
 
 void register_core_types() {
+	StringNames::create();
+
 	ClassDB::register_class<CommandLineOption>();
 	ClassDB::register_class<CommandLineHelpFormat>();
 	ClassDB::register_class<CommandLineParser>();
@@ -39,11 +43,20 @@ void register_core_types() {
 	ClassDB::register_class<ListNode>();
 	ClassDB::register_class<LinkedList>();
 
-	ClassDB::register_class<VariantMap>();
-	ClassDB::register_class<VariantResource>();
+	ClassDB::register_class<Graph>();
+	ClassDB::register_class<GraphVertex>();
+	ClassDB::register_class<GraphEdge>();
+	ClassDB::register_class<GraphIterator>();
 
-#if defined(TOOLS_ENABLED) && defined(GOOST_VariantResource)
-	EditorNode::add_init_callback(_variant_resource_preview_init);
+	ClassDB::register_class<Map2D>();
+	ClassDB::register_class<DataContainer>();
+
+#ifndef DISABLE_DEPRECATED
+	ClassDB::add_compatibility_class("VariantMap", "Map2D");
+	ClassDB::add_compatibility_class("VariantResource", "DataContainer");
+#endif
+#if defined(TOOLS_ENABLED) && defined(GOOST_DataContainer)
+	EditorNode::add_init_callback(_data_container_preview_init);
 #endif
 
 #ifdef GOOST_IMAGE_ENABLED
@@ -70,13 +83,14 @@ void unregister_core_types() {
 #ifdef GOOST_SCRIPT_ENABLED
 	unregister_script_types();
 #endif
+	StringNames::free();
 }
 
-#if defined(TOOLS_ENABLED) && defined(GOOST_VariantResource)
-void _variant_resource_preview_init() {
-	Ref<VariantResourcePreviewGenerator> variant_resource_preview;
-	variant_resource_preview.instance();
-	EditorResourcePreview::get_singleton()->add_preview_generator(variant_resource_preview);
+#if defined(TOOLS_ENABLED) && defined(GOOST_DataContainer)
+void _data_container_preview_init() {
+	Ref<DataContainerPreviewGenerator> data_container_preview;
+	data_container_preview.instance();
+	EditorResourcePreview::get_singleton()->add_preview_generator(data_container_preview);
 }
 #endif
 

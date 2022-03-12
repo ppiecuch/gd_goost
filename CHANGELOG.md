@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased] - 2022-XX-XX
+
+### Added
+
+- A general-purpose `Graph` class.
+- A `Random.choices()` method for weighted random selections from a sequence.
+- A `Random.pop()` method for popping random elements from a sequence.
+
+### Changed
+
+- Renamed `VariantMap` and `VariantResource` to `Map2D` and `DataContainer` respectively.
+- Renamed `Random.choice()` to `Random.pick()`, to go along with `Random.pop()`.
+
+### Removed
+
+- The `GradientTexture2D` (available directly in Godot 3.5 now).
+- Configuration files `disable_builtin.py` and `disable_community.py`.
+
 ## [1.2] - 2021-12-19
 
 ### Added
@@ -55,6 +73,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 Initial release.
 
+[Unreleased]: https://github.com/goostengine/goost/compare/1.2-stable+3.4.1...HEAD
 [1.2]: https://github.com/goostengine/goost/compare/1.1-stable+3.4...1.2-stable+3.4.1
 [1.1]: https://github.com/goostengine/goost/compare/1.0-stable+3.3.2...1.1-stable+3.4
 [1.0]: https://github.com/goostengine/goost/compare/1.0-beta-gd3...1.0-stable+3.3.2

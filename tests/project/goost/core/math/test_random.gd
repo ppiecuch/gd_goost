@@ -135,25 +135,130 @@ func test_randi_range_unbiased():
 	assert_almost_eq(zero_count / float(one_count), 1.0, 0.1)
 
 
-func test_choice():
+func test_pick():
 	var rng = Random.new_instance()
 
 	rng.seed = 58885
-	var element = rng.choice(["Godot", Color.blue, "Goost", Color.red])
+	var element = rng.pick(["Godot", Color.blue, "Goost", Color.red])
 	assert_eq(element, "Goost")
 
 	rng.seed = 222
-	element = rng.choice("Goost")
+	element = rng.pick("Goost")
 	assert_eq(element, "G")
 
 	rng.seed = 335
-	element = rng.choice({0 : "Godot", 1 : "Goost", 2 : "Godex"})
+	element = rng.pick({0 : "Godot", 1 : "Goost", 2 : "Godex"})
 	assert_eq(element, "Goost")
 
 	Engine.print_error_messages = false
 
-	assert_null(rng.choice(""))
-	assert_null(rng.choice([]))
+	assert_null(rng.pick(""))
+	assert_null(rng.pick([]))
+
+	Engine.print_error_messages = true
+
+
+func test_choices():
+	var rng = Random.new_instance()
+
+	rng.seed = 58885
+	var elements = rng.choices(["Godot", Color.blue, "Goost", Color.red], 4, [1,3,6,9])
+	assert_eq(elements, [Color.red, Color.red, "Goost", "Godot"])
+
+	rng.seed = 222
+	elements = rng.choices("Goost", 7, [1,14,6,9,5])
+	assert_eq(elements, ['G', 'o', 't', 'G', 's', 's', 't'])
+
+	rng.seed = 335
+	elements = rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4)
+	assert_eq(elements, ['Godex', 'Godot', 'Godex', 'Godex'])
+
+	rng.seed = 335
+	elements = rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [])
+	assert_eq(elements, ['Godex', 'Godot', 'Godex', 'Godex'])
+
+	rng.seed = 335
+	elements = rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, 9, 16])
+	assert_eq(elements, ['Godex', 'Godex', 'Godex', 'Godot'])
+
+	rng.seed = 335
+	elements = rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [], true)
+	assert_eq(elements, ['Godot', 'Goost', 'Godot', 'Goost'])
+
+	rng.seed = 335
+	elements = rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, 9, 16], true)
+	assert_eq(elements, ['Godex', 'Godot', 'Godot', 'Goost'])
+
+	Engine.print_error_messages = false
+
+	assert_eq(rng.choices(""), Array([]))
+	assert_eq(rng.choices([]), Array([]))
+
+	# Unequal sizes.
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, 9, 16, 18], true), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, 9], true), Array([]))
+	assert_eq(rng.choices(["Godot", "Goost", "Godex"], 4, [4, 9, 16, 18], true), Array([]))
+	assert_eq(rng.choices(["Godot", "Goost", "Godex"], 4, [4, 9], true), Array([]))
+
+	# Decreasing / negative.
+	assert_eq(rng.choices({"Godot": 3, "Goost": -8, "Godex": 10}, 4, [], false), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": -8, "Godex": 10}, 4, [], true), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 7}, 4, [], true), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, -9, 16, 18], false), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, -9, 16, 18], true), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [4, 9, 6, 18], true), Array([]))
+
+	# All zero weights.
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [0, 0, 0], true), Array([]))
+	assert_eq(rng.choices({"Godot": 3, "Goost": 8, "Godex": 10}, 4, [0, 0, 0], false), Array([]))
+
+	Engine.print_error_messages = true
+
+
+func test_pop():
+	var rng = Random.new_instance()
+	rng.seed = 38
+
+	var array = [1, 2, 3, 4]
+	var popped = []
+	for i in array.size():
+		var e = rng.pop(array)
+		assert_not_null(e)
+		popped.push_back(e)
+		assert_eq(array.size() + popped.size(), 4)
+
+	assert_eq(popped[0], 3)
+	assert_eq(popped[1], 1)
+	assert_eq(popped[2], 4)
+	assert_eq(popped[3], 2)
+	popped.clear()
+
+	var dictionary = {a = 1, b = 2, c = 3, d = 4}
+	for i in 4:
+		var e = rng.pop(dictionary)
+		assert_not_null(e)
+		popped.push_back(e)
+		assert_eq(dictionary.size() + popped.size(), 4)
+
+	assert_eq(popped[0], 3)
+	assert_eq(popped[1], 2)
+	assert_eq(popped[2], 1)
+	assert_eq(popped[3], 4)
+	popped.clear()
+
+	array.clear()
+	for i in 100:
+		array.push_back(i)
+
+	while not array.empty():
+		var _e = rng.pop(array)
+
+	assert_eq(array.size(), 0)
+
+	Engine.print_error_messages = false
+
+	assert_null(rng.pop([]))
+	assert_null(rng.pop({}))
 
 	Engine.print_error_messages = true
 

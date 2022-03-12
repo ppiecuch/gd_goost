@@ -4,11 +4,11 @@
 name = "Goost: Godot Engine Extension"
 short_name = "goost"
 version = {
-    "major": 1,
-    "minor": 3,
+    "major": 2,
+    "minor": 0,
     "patch": 0,
     "branch": "gd3",
-    "status": "beta",
+    "status": "dev",
     "year": 2022,
 }
 url = "https://github.com/goostengine/goost"
@@ -156,6 +156,7 @@ classes = {
 	"CommandLineHelpFormat": "core",
     "CommandLineOption": "core",
 	"CommandLineParser": "core",
+    "DataContainer": "core",
     "Debug2D": "scene",
     "DebugCapture": "scene",
     "GoostEngine": "core",
@@ -163,6 +164,10 @@ classes = {
     "GoostGeometry2D": "geometry",
     "GoostImage": "image",
     "GridRect": "gui",
+    "Graph": "core",
+    "GraphVertex": "core",
+    "GraphEdge": "core",
+    "GraphIterator": "core",
     "ImageBlender": "image",
     "ImageFrames": "image",  # modules/gif
     "ImageIndexed": "image",
@@ -170,6 +175,7 @@ classes = {
     "LightTexture": "scene",
     "LinkedList": "core",
     "ListNode": "core",
+    "Map2D": "core",
     "MidiFile": "audio",
     "MidiPlayer": "audio",
     "MixinScript": "script",
@@ -193,8 +199,6 @@ classes = {
     "ShapeCast2D": "physics",
     "Spawner2D": "scene",
     "Stopwatch": "scene",
-    "VariantMap": "core",
-    "VariantResource": "core",
     "VisualShape2D": "scene",
 }
 
@@ -224,6 +228,8 @@ class_dependencies = {
     "GoostEngine" : "InvokeState",
     "GoostGeometry2D" : ["PolyBoolean2D", "PolyDecomp2D", "PolyOffset2D"],
     "LinkedList" : "ListNode",
+    "Graph" : ["GraphVertex", "GraphEdge", "GraphIterator"],
+    "GraphEdge" : "GraphVertex",
     "MixinScript" : "Mixin",
     "PolyBoolean2D" : ["PolyBooleanParameters2D", "PolyNode2D"],
     "PolyDecomp2D" : "PolyDecompParameters2D",
