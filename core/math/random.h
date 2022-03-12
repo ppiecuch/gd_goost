@@ -2,19 +2,9 @@
 
 #include "core/math/random_number_generator.h"
 
-class Random : public RandomNumberGenerator {
-	GDCLASS(Random, RandomNumberGenerator);
-
-private:
-	static Random *singleton;
-
-protected:
-	static void _bind_methods();
+class RandomBase : public RandomNumberGenerator {
 
 public:
-	static Random *get_singleton() { return singleton; }
-	virtual Ref<Reference> new_instance() const { return memnew(Random); }
-
 	uint32_t get_number();
 	real_t get_value();
 	Color get_color();
@@ -29,6 +19,22 @@ public:
 	Array choices(const Variant &p_sequence, int p_count = 1, const PoolIntArray &p_weights = Variant(), bool p_is_cumulative = false);
 	void shuffle(Array p_array);
 	bool decision(float probability);
+
+	RandomBase() { }
+};
+
+class Random : public RandomBase {
+	GDCLASS(Random, RandomBase);
+
+private:
+	static Random *singleton;
+
+protected:
+	static void _bind_methods();
+
+public:
+	static Random *get_singleton() { return singleton; }
+	virtual Ref<Reference> new_instance() const { return memnew(Random); }
 
 	Random() {
 		if (!singleton) {

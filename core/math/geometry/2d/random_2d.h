@@ -2,8 +2,8 @@
 
 #include "core/math/random.h"
 
-class Random2D : public RandomNumberGenerator {
-	GDCLASS(Random2D, RandomNumberGenerator);
+class Random2D : public RandomBase {
+	GDCLASS(Random2D, RandomBase);
 
 private:
 	static Random2D *singleton;
@@ -14,8 +14,6 @@ protected:
 public:
 	static Random2D *get_singleton() { return singleton; }
 	virtual Ref<Reference> new_instance() const { return memnew(Random2D); }
-
-#	include "../../random_base.inl.h"
 
 	real_t get_rotation();
 	Vector2 get_direction(); // Unit vector.
@@ -32,4 +30,3 @@ public:
 		}
 	}
 };
-

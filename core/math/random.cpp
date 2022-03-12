@@ -5,26 +5,26 @@
 
 Random *Random::singleton = nullptr;
 
-uint32_t Random::get_number() {
+uint32_t RandomBase::get_number() {
 	return randi();
 }
 
-real_t Random::get_value() {
+real_t RandomBase::get_value() {
 	return randf();
 }
 
-Color Random::get_color() {
+Color RandomBase::get_color() {
 	Color color;
 	// Pick not too pale and not too dark color.
 	color.set_hsv(randf(), randf_range(0.5, 1.0), randf_range(0.5, 1.0));
 	return color;
 }
 
-bool Random::get_condition() {
+bool RandomBase::get_condition() {
 	return randf() >= 0.5;
 }
 
-Variant Random::range(const Variant &p_from, const Variant &p_to) {
+Variant RandomBase::range(const Variant &p_from, const Variant &p_to) {
 	ERR_FAIL_COND_V_MSG(p_from.get_type() != p_to.get_type(), Variant(), "Incompatible types.");
 
 	switch (p_from.get_type()) {
@@ -47,7 +47,7 @@ Variant Random::range(const Variant &p_from, const Variant &p_to) {
 	return Variant();
 }
 
-Color Random::color_hsv(float h_min, float h_max, float s_min, float s_max, float v_min, float v_max, float a_min, float a_max) {
+Color RandomBase::color_hsv(float h_min, float h_max, float s_min, float s_max, float v_min, float v_max, float a_min, float a_max) {
 	Color color;
 	color.set_hsv(
 			randf_range(h_min, h_max),
@@ -57,7 +57,7 @@ Color Random::color_hsv(float h_min, float h_max, float s_min, float s_max, floa
 	return color;
 }
 
-Color Random::color_rgb(float r_min, float r_max, float g_min, float g_max, float b_min, float b_max, float a_min, float a_max) {
+Color RandomBase::color_rgb(float r_min, float r_max, float g_min, float g_max, float b_min, float b_max, float a_min, float a_max) {
 	return Color(
 			randf_range(r_min, r_max),
 			randf_range(g_min, g_max),
@@ -65,7 +65,7 @@ Color Random::color_rgb(float r_min, float r_max, float g_min, float g_max, floa
 			randf_range(a_min, a_max));
 }
 
-Variant Random::pick(const Variant &p_sequence) {
+Variant RandomBase::pick(const Variant &p_sequence) {
 	switch (p_sequence.get_type()) {
 		case Variant::STRING: {
 			String str = p_sequence;
@@ -96,7 +96,7 @@ Variant Random::pick(const Variant &p_sequence) {
 	return Variant();
 }
 
-Variant Random::pop(const Variant &p_sequence) {
+Variant RandomBase::pop(const Variant &p_sequence) {
 	switch (p_sequence.get_type()) {
 		case Variant::STRING: {
 			ERR_FAIL_V_MSG(Variant(), "Unsupported: String is passed by value.");
@@ -139,7 +139,7 @@ Variant Random::pop(const Variant &p_sequence) {
 	return Variant();
 }
 
-Array Random::choices(const Variant &p_sequence, int p_count, const PoolIntArray &p_weights, bool p_is_cumulative) {
+Array RandomBase::choices(const Variant &p_sequence, int p_count, const PoolIntArray &p_weights, bool p_is_cumulative) {
 	int sum = 0;
 	LocalVector<int, int> cumulative_weights;
 	LocalVector<int, int> weights;
@@ -250,7 +250,7 @@ Array Random::choices(const Variant &p_sequence, int p_count, const PoolIntArray
 	return Array();
 }
 
-void Random::shuffle(Array p_array) {
+void RandomBase::shuffle(Array p_array) {
 	if (p_array.size() < 2) {
 		return;
 	}
@@ -262,9 +262,12 @@ void Random::shuffle(Array p_array) {
 	}
 }
 
-bool Random::decision(float probability) {
+bool RandomBase::decision(float probability) {
 	return randf() <= probability;
 }
+
+
+/// Random
 
 void Random::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("new_instance"), &Random::new_instance);

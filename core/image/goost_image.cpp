@@ -9,7 +9,7 @@
 #include "thirdparty/hqx/HQ3x.hh"
 #include "thirdparty/leptonica/allheaders.h"
 
-#include "goost/core/types/templates/queue.h"
+#include "core/types/templates/queue.h"
 
 void GoostImage::replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color) {
 	ERR_FAIL_COND(p_image.is_null());
