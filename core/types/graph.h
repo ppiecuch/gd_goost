@@ -6,8 +6,8 @@
 #include "core/local_vector.h"
 #include "core/oa_hash_map.h"
 
-#include "goost/core/types/templates/queue.h"
-#include "goost/core/types/templates/stack.h"
+#include "core/types/templates/queue.h"
+#include "core/types/templates/stack.h"
 
 class GraphVertex;
 class GraphEdge;

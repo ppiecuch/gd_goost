@@ -12,7 +12,7 @@ struct PriorityQueueMaxHeapComparator {
 
 template <typename T, class Comparator=PriorityQueueMinHeapComparator<T>>
 class PriorityQueue {
-	LocalVector<T, int> vector;
+	LocalVector<T> vector;
 
 	_FORCE_INLINE_ int parent(int i) const {
 		return (i - 1) / 2;
