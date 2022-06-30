@@ -33,6 +33,7 @@
 
 # Editors
 .vscode
+.DS_Store
 
 # Godot files
 *.import
