@@ -12,8 +12,8 @@ if env["goost_math_enabled"]:
 if env["goost_script_enabled"]:
     SConscript("script/SCsub", exports="env_goost")
 
-env_goost.add_source_files(env.modules_sources, "*.cpp")
-env_goost.add_source_files(env.modules_sources, "types/*.cpp")
+env_goost.add_source_files(env_goost.sources, "*.cpp")
+env_goost.add_source_files(env_goost.sources, "types/*.cpp")
 
 if env["tools"]:
-    env_goost.add_source_files(env.modules_sources, "types/editor/*.cpp")
+    env_goost.add_source_files(env_goost.sources, "types/editor/*.cpp")

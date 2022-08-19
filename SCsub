@@ -112,6 +112,7 @@ def goost_add_source_files(self, sources, files):
 
 # Inject now!
 env_goost.__class__.add_source_files = goost_add_source_files
+env_goost.sources = []
 
 # Add sources.
 Export("env_goost")
@@ -120,7 +121,7 @@ if env["goost_core_enabled"]:
     SConscript("core/SCsub")
 else:
     core_sources = ["core/string_names.cpp"]
-    env_goost.add_source_files(env.modules_sources, core_sources)
+    env_goost.add_source_files(env_goost.sources, core_sources)
 
 if env["goost_scene_enabled"]:
     SConscript("scene/SCsub")
@@ -130,8 +131,11 @@ if env["goost_editor_enabled"]:
 
 SConscript("thirdparty/SCsub")
 
-env_goost.add_source_files(env.modules_sources, "register_types.cpp")
-env_goost.add_source_files(env.modules_sources, "classes_enabled.gen.cpp")
+env_goost.add_source_files(env_goost.sources, "register_types.cpp")
+env_goost.add_source_files(env_goost.sources, "classes_enabled.gen.cpp")
 
 # Restore the method back (not sure if needed, but good for consistency).
 env_goost.__class__.add_source_files = godot_add_source_files
+
+lib = env_goost.Library("gd_goost", env_goost.sources) # Compile as a static library
+env.Prepend(LIBS=[lib]) # Add the library as a dependency of the final executable

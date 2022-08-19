@@ -55,7 +55,7 @@ env_git.Prepend(
 )
 
 env_pcre = env_git.Clone()
-env_pcre.add_source_files(env.modules_sources, Glob("thirdparty/libgit2/deps/pcre/" + "*.c"))
+env_pcre.add_source_files(env_goost.sources, Glob("thirdparty/libgit2/deps/pcre/" + "*.c"))
 env_pcre.disable_warnings()
 
 if env["platform"] == "windows":
@@ -117,8 +117,8 @@ if env["platform"] in ["x11", "osx"]:
     )
 
 env_thirdparty = env_git.Clone()
-env_thirdparty.add_source_files(env.modules_sources, thirdparty_sources)
+env_thirdparty.add_source_files(env_goost.sources, thirdparty_sources)
 env_thirdparty.disable_warnings()
 
 # Module source files.
-env_git.add_source_files(env.modules_sources, "*.cpp")
+env_git.add_source_files(env_goost.sources, "*.cpp")

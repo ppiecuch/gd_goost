@@ -14,4 +14,4 @@ source_dirs = [
 env_gdscript_transpiler.Prepend(CPPPATH=source_dirs)
 sources = [Glob(d + "*.cpp") for d in source_dirs]
 
-env_gdscript_transpiler.add_source_files(env.modules_sources, sources)
+env_gdscript_transpiler.add_source_files(env_goost.sources, sources)

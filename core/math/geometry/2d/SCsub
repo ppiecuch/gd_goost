@@ -3,7 +3,7 @@
 Import("env")
 Import("env_goost")
 
-env_goost.add_source_files(env.modules_sources, "*.cpp")
+env_goost.add_source_files(env_goost.sources, "*.cpp")
 
 Export("env_goost")
 

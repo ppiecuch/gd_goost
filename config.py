@@ -21,6 +21,7 @@ def configure(env):
     components_config = {}
     components_enabled_by_default = True
     classes_config = {}
+    classes_disabled = []
     classes_enabled_by_default = True
 
     # From `custom.py` file.
@@ -32,6 +33,8 @@ def configure(env):
             components_enabled_by_default = custom.components_enabled_by_default
         if hasattr(custom, "classes"):
             classes_config = custom.classes
+        if hasattr(custom, "classes_disabled"):
+            classes_disabled = custom.classes_disabled
         if hasattr(custom, "classes_enabled_by_default"):
             classes_enabled_by_default = custom.classes_enabled_by_default
     except ImportError:
@@ -64,7 +67,7 @@ def configure(env):
     opts.Update(env)
 
     components = configure_components(env, components_config, components_enabled_by_default)
-    classes = configure_classes(env, classes_config, classes_enabled_by_default)
+    classes = configure_classes(env, classes_config, classes_enabled_by_default, classes_disabled)
 
     if env["verbose"]:
         for class_name in classes["enabled"]:
@@ -143,10 +146,10 @@ def configure_components(env, config, enabled_by_default):
     return components
 
 
-def configure_classes(env, config, enabled_by_default):
+def configure_classes(env, config, enabled_by_default, classes_disabled=[]):
     # Individual classes (for when configuring components is not enough).
     # Can only be configured via `custom.py` file.
-    classes = goost.get_classes(config, enabled_by_default)
+    classes = goost.get_classes(config, enabled_by_default, classes_disabled)
 
     env["goost_classes_enabled"] = classes["enabled"]
     env["goost_classes_disabled"] = classes["disabled"]

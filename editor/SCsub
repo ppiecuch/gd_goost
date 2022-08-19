@@ -4,4 +4,4 @@ Import("env")
 Import("env_goost")
 
 if env["tools"] and env["goost_editor_enabled"]:
-    env_goost.add_source_files(env.modules_sources, "*.cpp")
+    env_goost.add_source_files(env_goost.sources, "*.cpp")

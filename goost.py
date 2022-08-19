@@ -153,9 +153,9 @@ class GoostClass:
 # Only rightmost child components are specified.
 classes = {
     "EditorVCSInterfaceGit": "vcs",  # modules/git
-	"CommandLineHelpFormat": "core",
+    "CommandLineHelpFormat": "core",
     "CommandLineOption": "core",
-	"CommandLineParser": "core",
+    "CommandLineParser": "core",
     "DataContainer": "core",
     "Debug2D": "scene",
     "DebugCapture": "scene",
@@ -265,7 +265,7 @@ def resolve_dependency(goost_class):
         resolved_list.append(c.name)
     return resolved_list
 
-def get_classes(config={}, enabled_by_default=True):
+def get_classes(config={}, enabled_by_default=True, def_classes_disabled=[]):
     import sys
 
     if not config:
@@ -281,7 +281,7 @@ def get_classes(config={}, enabled_by_default=True):
         if enabled_by_default:
             classes_disabled = []
             for name, enabled in config.items():
-                if not enabled:
+                if not enabled or name in def_classes_disabled:
                     if not name in classes:
                         raise NameError("Goost: Requested to disable non-existing class `%s`" % name)
                     classes_enabled.remove(name)
@@ -289,7 +289,7 @@ def get_classes(config={}, enabled_by_default=True):
         else:
             classes_enabled = []
             for name, enabled in config.items():
-                if enabled:
+                if enabled and not name in def_classes_disabled:
                     if not name in classes:
                         raise NameError("Goost: Requested to enable non-existing class `%s`" % name)
                     classes_enabled.append(name)

@@ -20,6 +20,6 @@ source_dirs = [
     "utils",
 ]
 sources = [Glob(d + "/" + "*.cpp") for d in source_dirs]
-env_goost.add_source_files(env.modules_sources, sources)
+env_goost.add_source_files(env_goost.sources, sources)
 
-env_goost.add_source_files(env.modules_sources, "*.cpp")
+env_goost.add_source_files(env_goost.sources, "*.cpp")
