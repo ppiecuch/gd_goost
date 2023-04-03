@@ -211,6 +211,9 @@ String DataContainer::get_property_hint_name(const PropertyHint &p_hint) {
 		case PROPERTY_HINT_LOCALE_ID: {
 			return "Locale Id";
 		} break;
+		case PROPERTY_HINT_LINK: {
+			return "Link";
+		} break;
 	}
 	return "";
 }
