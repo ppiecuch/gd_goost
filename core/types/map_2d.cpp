@@ -40,7 +40,7 @@ void Map2D::set_element(int p_x, int p_y, const Variant &p_value) {
 	ERR_FAIL_COND(p_y >= height);
 #endif
 	uint32_t ofs = p_y * width + p_x;
-	return data.write[ofs] = p_value;
+	data.write[ofs] = p_value;
 }
 
 Variant Map2D::get_element(int p_x, int p_y) {
