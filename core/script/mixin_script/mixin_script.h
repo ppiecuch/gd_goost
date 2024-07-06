@@ -82,7 +82,7 @@ public:
 
 	virtual bool has_source_code() const { return false; }
 	virtual String get_source_code() const { return ""; }
-	virtual void set_source_code(const String &p_code) {};
+	virtual void set_source_code(const String &p_code) {}
 	virtual Error reload(bool p_keep_state = false);
 
 	virtual bool is_tool() const;
