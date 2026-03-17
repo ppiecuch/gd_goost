@@ -28,17 +28,22 @@ static void _debug_2d_add_to_scene_tree() {
 		return;
 	}
 	auto debug_2d = Debug2D::get_singleton();
+	if (!debug_2d) {
+		return;
+	}
 	bool editor = Engine::get_singleton()->is_editor_hint();
 	debug_2d->set_name("Debug2D");
-	debug_2d->set_enabled(GLOBAL_GET("debug/draw/2d/enabled"));
 
 	if (editor) {
 #ifdef TOOLS_ENABLED
+		if (!EditorNode::get_singleton() || !EditorNode::get_singleton()->get_scene_root()) {
+			return;
+		}
 		EditorNode::get_singleton()->get_scene_root()->add_child(debug_2d);
 		debug_2d->get_grid()->hide();
 #endif
 	} else {
-		if (!SceneTree::get_singleton()) {
+		if (!SceneTree::get_singleton() || !SceneTree::get_singleton()->get_root()) {
 			return;
 		}
 		SceneTree::get_singleton()->get_root()->add_child(debug_2d);
@@ -64,6 +69,8 @@ static void _debug_2d_add_to_scene_tree() {
 		grid->set("custom_colors/line_division", GLOBAL_GET("debug/draw/2d/grid/divisions_line_color"));
 		grid->set("custom_colors/background", GLOBAL_GET("debug/draw/2d/grid/background_color"));
 	}
+	// Enable after adding to tree — update() requires a valid canvas item in the tree.
+	debug_2d->set_enabled(GLOBAL_GET("debug/draw/2d/enabled"));
 	_debug_2d_added = true;
 }
 #endif
